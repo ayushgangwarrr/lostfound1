@@ -2,7 +2,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Footer from "../pages/Footer";
 import { useEffect, useState ,useRef} from "react";
 import { motion, useScroll, useSpring, useTransform,AnimatePresence } from "framer-motion";
-import nit from ".assets/nit.png"
+import nit from "./assets/nit.png";
+import key from "./assets/key.png";
+import mac from "./assets/mac.png";
+import wallet from "./assets/wallet.png";
+import id from "./assets/id.png";
+
+
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -278,7 +284,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/wallet.png"
+                src={wallet}
                 alt="wallet"
                 className="h-40 w-full object-cover"
               />
@@ -306,7 +312,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/mac.png"
+                src={mac}
                 alt="laptop"
                 className="h-40 w-full object-cover"
               />
@@ -334,7 +340,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/id.png"
+                src={id}
                 alt="id"
                 className="h-40 w-full object-cover"
               />
@@ -362,7 +368,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/key.png"
+                src={key}
                 alt="keys"
                 className="h-40 w-full object-cover"
               />
@@ -386,7 +392,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/wallet.png"
+                src={wallet}
                 alt="wallet"
                 className="h-40 w-full object-cover"
               />
@@ -414,7 +420,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/mac.png"
+                src={mac}
                 alt="laptop"
                 className="h-40 w-full object-cover"
               />
@@ -442,7 +448,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/id.png"
+                src={id}
                 alt="id"
                 className="h-40 w-full object-cover"
               />
