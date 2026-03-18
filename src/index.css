@@ -1,0 +1,27 @@
+@import "tailwindcss";
+.animate-marquee {
+  animation: marquee 10s linear infinite;
+}
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+}
+
+.marquee-content {
+  display: inline-block;
+  padding-right: 2rem;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+body{
+  font-family: 'Poppins', sans-serif;
+}
