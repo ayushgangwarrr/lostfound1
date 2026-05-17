@@ -1,21 +1,28 @@
 import { useEffect,useState } from "react";
-import { getItems } from "../utils/items";
 import Navbar from "../components/Navbar";
+import API_BASE, { fetchJson } from "../utils/api.js";
 
 export default function Items(){
+  const [items,setItems]=useState([]);
+  const [search,setSearch]=useState("");
 
-const [items,setItems] = useState([]);
-const [search,setSearch] = useState("");
-const [description, setDescription] = useState("");
+  useEffect(()=>{
+    const loadReports = async () => {
+      try {
+        const data = await fetchJson("/api/reports");
+        setItems(data.reports);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-useEffect(()=>{
-setItems(getItems());
-},[]);
+    loadReports();
+  },[]);
 
 const filteredItems=items.filter(item=>
-item.title.toLowerCase().includes(search.toLowerCase()) ||
-item.location.toLowerCase().includes(search.toLowerCase())||
-item.description.toLowerCase().includes(search.toLowerCase())
+(item.itemName || "").toLowerCase().includes(search.toLowerCase()) ||
+(item.location || "").toLowerCase().includes(search.toLowerCase()) ||
+(item.description || "").toLowerCase().includes(search.toLowerCase())
 );
 
 return(
@@ -42,15 +49,15 @@ className="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:scale-105 tra
 >
 
 <img
-src={item.image || "https://via.placeholder.com/300"}
-alt={item.title}
+src={item.image ? `${API_BASE}${item.image}` : "https://via.placeholder.com/300"}
+alt={item.itemName}
 className="w-full h-40 object-cover"
 />
 
 <div className="p-4">
 
 <h3 className="text-white font-semibold text-lg">
-{item.title}
+{item.itemName}
 </h3>
 
 <p className="text-gray-400 text-sm">

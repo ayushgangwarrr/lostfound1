@@ -1,18 +1,33 @@
-import { Link, Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { fetchJson } from "../utils/api.js";
+
 export default function Navbar() {
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
+    const loadUser = async () => {
+      try {
+        const data = await fetchJson("/api/auth/profile");
+        setUser(data.profile);
+      } catch (error) {
+        setUser(null);
+      }
+    };
+
+    loadUser();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.reload();
+  const handleLogout = async () => {
+    try {
+      await fetchJson("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error(error);
+    }
+    setUser(null);
+    navigate("/login");
   };
-  const navigate = useNavigate();
 
     return (
 

@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
-import { getItems } from "../utils/items";
+import { useNavigate } from "react-router-dom";
+import { fetchJson } from "../utils/api.js";
 import DashboardCards from "../components/DashboardCards";
 import Navbar from "../components/Navbar";
 
 export default function Dashboard() {
-
   const [items, setItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setItems(getItems());
-  }, []);
+    const loadItems = async () => {
+      try {
+        const data = await fetchJson("/api/reports/user");
+        setItems(data.reports);
+      } catch (error) {
+        console.error(error);
+        if (error.status === 401) {
+          navigate("/login");
+        }
+      }
+    };
+
+    loadItems();
+  }, [navigate]);
 
   return (
 
@@ -79,13 +92,17 @@ export default function Dashboard() {
         <DashboardCards />
       </div>
       <button
-        onClick={() => {
-          localStorage.clear();
-          window.location.reload();
+        onClick={async () => {
+          try {
+            await fetchJson("/api/auth/logout", { method: "POST" });
+          } catch (error) {
+            console.error(error);
+          }
+          navigate("/login");
         }}
         className="bg-red-600 px-4 py-2 rounded"
       >
-        Clear Data
+        Logout
       </button>
     </div>
 

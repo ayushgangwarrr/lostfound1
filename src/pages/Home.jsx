@@ -2,21 +2,38 @@ import { Link, useNavigate } from "react-router-dom";
 import Footer from "../pages/Footer";
 import { useEffect, useState ,useRef} from "react";
 import { motion, useScroll, useSpring, useTransform,AnimatePresence } from "framer-motion";
+import { fetchJson } from "../utils/api.js";
 
 
 
 
 export default function Home() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
+    const loadUser = async () => {
+      try {
+        const data = await fetchJson("/api/auth/profile");
+        setUser(data.profile);
+      } catch (error) {
+        setUser(null);
+      }
+    };
+
+    loadUser();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.reload();
+  const handleLogout = async () => {
+    try {
+      await fetchJson("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error(error);
+    }
+    setUser(null);
+    navigate("/login");
   };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
@@ -28,7 +45,6 @@ export default function Home() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navigate = useNavigate();
   const { scrollY } = useScroll();
 
   // small vertical movement
@@ -43,7 +59,7 @@ export default function Home() {
   const x3 = useTransform(scrollY, [0, 600], [0, 2]);
   const x4 = useTransform(scrollY, [0, 600], [0, -2]);
 
-  // smooth animation
+  
   const smoothY1 = useSpring(y1, { stiffness: 40, damping: 25 });
   const smoothY2 = useSpring(y2, { stiffness: 40, damping: 25 });
   const smoothY3 = useSpring(y3, { stiffness: 40, damping: 25 });
@@ -308,7 +324,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src={mac}
+                 src="/image/mac.png"
                 alt="laptop"
                 className="h-40 w-full object-cover"
               />
@@ -336,7 +352,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src={id}
+                src="/image/id.png"
                 alt="id"
                 className="h-40 w-full object-cover"
               />
@@ -364,7 +380,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src={key}
+              src="/image/key.png"
                 alt="keys"
                 className="h-40 w-full object-cover"
               />
@@ -388,7 +404,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src={wallet}
+               src="/image/wallet.png"
                 alt="wallet"
                 className="h-40 w-full object-cover"
               />
@@ -416,7 +432,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src={mac}
+          src="/image/wallet.png"
                 alt="laptop"
                 className="h-40 w-full object-cover"
               />
@@ -444,7 +460,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src={id}
+                src="/image/wallet.png"
                 alt="id"
                 className="h-40 w-full object-cover"
               />
@@ -472,7 +488,7 @@ export default function Home() {
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
               <img
-                src="/src/assets/key.png"
+          src="/image/wallet.png"
                 alt="keys"
                 className="h-40 w-full object-cover"
               />

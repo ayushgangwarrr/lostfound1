@@ -14,3 +14,23 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Backend Setup
+
+A new backend has been added in `backend/` using Node.js, Express, MongoDB Atlas, Mongoose, bcrypt, JWT, and Multer for image upload.
+
+Steps to run the backend:
+
+1. Copy `backend/.env.example` to `backend/.env`.
+2. Fill in `MONGO_URI`, `JWT_SECRET`, and `PORT` in the `.env` file.
+3. Install backend dependencies:
+   ```bash
+   cd backend
+   npm install
+   ```
+4. Start the backend server:
+   ```bash
+   npm run dev
+   ```
+
+The frontend will send requests to `http://localhost:5000` by default.
