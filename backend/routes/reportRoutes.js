@@ -11,17 +11,7 @@ import {
 import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => {
-    const timestamp = Date.now();
-    const safeName = file.originalname.replace(/\s+/g, "-").toLowerCase();
-    cb(null, `${timestamp}-${safeName}`);
-  },
-});
-
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/report", requireAuth, upload.single("image"), createReport);
 router.get("/reports", getReports);

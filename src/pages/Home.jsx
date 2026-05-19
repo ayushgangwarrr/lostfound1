@@ -3,26 +3,14 @@ import Footer from "../pages/Footer";
 import { useEffect, useState ,useRef} from "react";
 import { motion, useScroll, useSpring, useTransform,AnimatePresence } from "framer-motion";
 import { fetchJson } from "../utils/api.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 
 
 
 export default function Home() {
-  const [user, setUser] = useState(null);
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const data = await fetchJson("/api/auth/profile");
-        setUser(data.profile);
-      } catch (error) {
-        setUser(null);
-      }
-    };
-
-    loadUser();
-  }, []);
 
   const handleLogout = async () => {
     try {

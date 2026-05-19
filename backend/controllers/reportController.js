@@ -1,4 +1,14 @@
 import Report from "../models/Report.js";
+import { uploadImage, deleteImage } from "../utils/cloudinary.js";
+
+const getCloudinaryFields = async (file) => {
+  if (!file) return {};
+  const uploadResult = await uploadImage(file);
+  return {
+    image: uploadResult.secure_url,
+    imageId: uploadResult.public_id,
+  };
+};
 
 export const createReport = async (req, res) => {
   const {
@@ -6,6 +16,8 @@ export const createReport = async (req, res) => {
     itemName,
     description,
     personName,
+    rollNumber,
+    category,
     phone,
     location,
     dateLostOrFound,
@@ -16,17 +28,25 @@ export const createReport = async (req, res) => {
     return res.status(400).json({ message: "Missing required report fields" });
   }
 
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : req.body.image || "";
-
   try {
+    const imageFields = req.file
+      ? await getCloudinaryFields(req.file)
+      : {
+          image: req.body.image || "",
+          imageId: "",
+        };
+
     const report = await Report.create({
       userId: req.user._id,
       type,
       itemName,
       description,
-      personName,
+      personName: personName || req.user.name,
+      rollNumber: (rollNumber || req.user.rollNumber || "").toString().trim().toUpperCase(),
+      category: category || "Other",
       phone,
-      image: imageUrl,
+      image: imageFields.image,
+      imageId: imageFields.imageId,
       location,
       dateLostOrFound: dateLostOrFound ? new Date(dateLostOrFound) : Date.now(),
       reward,
@@ -41,7 +61,9 @@ export const createReport = async (req, res) => {
 
 export const getReports = async (req, res) => {
   try {
-    const reports = await Report.find().populate("userId", "name email phone").sort({ createdAt: -1 });
+    const reports = await Report.find()
+      .populate("userId", "name email phone rollNumber")
+      .sort({ createdAt: -1 });
     return res.status(200).json({ reports });
   } catch (error) {
     console.error(error);
@@ -51,7 +73,7 @@ export const getReports = async (req, res) => {
 
 export const getReportById = async (req, res) => {
   try {
-    const report = await Report.findById(req.params.id).populate("userId", "name email phone");
+    const report = await Report.findById(req.params.id).populate("userId", "name email phone rollNumber");
     if (!report) {
       return res.status(404).json({ message: "Report not found" });
     }
@@ -68,16 +90,23 @@ export const updateReport = async (req, res) => {
     if (!report) {
       return res.status(404).json({ message: "Report not found" });
     }
-    if (report.userId.toString() !== req.user._id.toString()) {
+    if (report.userId.toString() !== req.user._id.toString() && !req.user.isAdmin) {
       return res.status(403).json({ message: "Unauthorized to update this report" });
     }
 
     const updateData = {
       ...req.body,
+      rollNumber: req.body.rollNumber ? req.body.rollNumber.toString().trim().toUpperCase() : report.rollNumber,
+      category: req.body.category || report.category || "Other",
     };
 
     if (req.file) {
-      updateData.image = `/uploads/${req.file.filename}`;
+      if (report.imageId) {
+        await deleteImage(report.imageId);
+      }
+      const imageFields = await getCloudinaryFields(req.file);
+      updateData.image = imageFields.image;
+      updateData.imageId = imageFields.imageId;
     }
 
     const updatedReport = await Report.findByIdAndUpdate(req.params.id, updateData, {
@@ -98,10 +127,13 @@ export const deleteReport = async (req, res) => {
     if (!report) {
       return res.status(404).json({ message: "Report not found" });
     }
-    if (report.userId.toString() !== req.user._id.toString()) {
+    if (report.userId.toString() !== req.user._id.toString() && !req.user.isAdmin) {
       return res.status(403).json({ message: "Unauthorized to delete this report" });
     }
 
+    if (report.imageId) {
+      await deleteImage(report.imageId);
+    }
     await report.deleteOne();
 
     return res.status(200).json({ message: "Report deleted" });
@@ -113,7 +145,9 @@ export const deleteReport = async (req, res) => {
 
 export const getMyReports = async (req, res) => {
   try {
-    const reports = await Report.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const reports = await Report.find({ userId: req.user._id })
+      .populate("userId", "name email phone rollNumber")
+      .sort({ createdAt: -1 });
     return res.status(200).json({ reports });
   } catch (error) {
     console.error(error);

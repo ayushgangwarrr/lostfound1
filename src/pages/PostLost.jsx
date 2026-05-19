@@ -1,15 +1,27 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchJson } from "../utils/api.js";
+import { useAuth } from "../context/AuthContext.jsx";
+
+const categories = ["Electronics", "Documents", "Clothing", "Accessories", "Other"];
 
 export default function PostLost() {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [rollNumber, setRollNumber] = useState("");
+  const [category, setCategory] = useState("Other");
   const [contact, setContact] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [recentReports, setRecentReports] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.rollNumber) {
+      setRollNumber(user.rollNumber);
+    }
+  }, [user]);
 
   useEffect(() => {
     const loadReports = async () => {
@@ -41,7 +53,9 @@ export default function PostLost() {
     body.append("type", "lost");
     body.append("itemName", title);
     body.append("description", description);
-    body.append("personName", "");
+    body.append("personName", user?.name || "");
+    body.append("rollNumber", rollNumber || user?.rollNumber || "");
+    body.append("category", category);
     body.append("phone", contact);
     body.append("location", location);
     if (imageFile) {
@@ -103,6 +117,32 @@ export default function PostLost() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="block mb-2">Roll Number</label>
+              <input
+                type="text"
+                placeholder="Enter roll number"
+                className="w-full p-3 rounded bg-slate-800 border border-gray-700"
+                value={rollNumber}
+                onChange={(e) => setRollNumber(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block mb-2">Category</label>
+              <select
+                className="w-full p-3 rounded bg-slate-800 border border-gray-700"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {categories.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div>
             <label className="block mb-2">Contact number</label>

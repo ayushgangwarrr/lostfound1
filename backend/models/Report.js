@@ -26,12 +26,26 @@ const reportSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    rollNumber: {
+      type: String,
+      trim: true,
+      uppercase: true,
+    },
+    category: {
+      type: String,
+      trim: true,
+      default: "Other",
+    },
     phone: {
       type: String,
       required: [true, "Phone is required"],
       trim: true,
     },
     image: {
+      type: String,
+      trim: true,
+    },
+    imageId: {
       type: String,
       trim: true,
     },

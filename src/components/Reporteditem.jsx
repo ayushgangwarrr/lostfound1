@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import { fetchJson } from "../utils/api.js";
+import { fetchJson, resolveImageUrl } from "../utils/api.js";
 
 export default function Reporteditem() {
   const [myItems, setMyItems] = useState([]);
@@ -34,7 +34,7 @@ export default function Reporteditem() {
           {myItems.map((item) => (
             <div key={item._id} className="bg-slate-800 rounded-xl overflow-hidden hover:scale-105 transition shadow-lg">
               {item.image ? (
-                <img src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${item.image}`} className="h-40 w-full object-cover" />
+                <img src={resolveImageUrl(item.image)} className="h-40 w-full object-cover" />
               ) : (
                 <div className="h-40 w-full bg-slate-700 flex items-center justify-center text-gray-400">No image</div>
               )}
@@ -42,6 +42,7 @@ export default function Reporteditem() {
                 <h3 className="font-semibold text-lg">{item.itemName}</h3>
                 <p className="text-gray-400 text-sm">{item.location}</p>
                 <p className="text-gray-500 text-xs mt-2">{item.type}</p>
+                <p className="text-gray-400 text-xs mt-1">Roll: {item.rollNumber || item.userId?.rollNumber || "N/A"}</p>
               </div>
             </div>
           ))}

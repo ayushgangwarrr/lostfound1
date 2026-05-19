@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { fetchJson } from "../utils/api.js";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
+    rollNumber: "",
     email: "",
     password: "",
     phone: "",
@@ -17,7 +20,7 @@ export default function Signup() {
   };
 
   const nextStep = () => {
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password || !formData.rollNumber || !formData.phone) {
       alert("Please fill all fields");
       return;
     }
@@ -31,15 +34,16 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
 
     try {
-      await fetchJson("/api/auth/signup", {
+      const data = await fetchJson("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
+      setUser(data.user);
       alert("Account created successfully");
       navigate("/");
     } catch (error) {
@@ -69,6 +73,13 @@ export default function Signup() {
                 name="name"
                 placeholder="Full Name"
                 value={formData.name}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              <input
+                name="rollNumber"
+                placeholder="enter your roll number"
+                value={formData.rollNumber}
                 onChange={handleChange}
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               />

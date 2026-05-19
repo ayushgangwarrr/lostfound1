@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
-
+import { NavLink } from "react-router-dom";
 import { useEffect } from "react";
 function Footer() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const footerLinkClass = ({ isActive }) =>
+    `block transition hover:text-blue-500 ${isActive ? "text-blue-400 font-semibold" : "text-gray-300"}`;
   return (
     <footer className="bg-slate-900 text-gray-300 pt-16 pb-10">
 
@@ -33,50 +35,31 @@ function Footer() {
           <h3 className="font-semibold text-white mb-4">QUICK LINKS</h3>
 
           <ul className="space-y-2 text-sm">
-          <li>
-              <Link
-                className="hover:text-blue-500 transition"
-                to="/"
-              >
+            <li>
+              <NavLink className={footerLinkClass} to="/">
                 Home
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link
-                className="hover:text-blue-500 transition"
-                to="/items"
-              >
+              <NavLink className={footerLinkClass} to="/browse">
                 Browse Items
-              </Link>
+              </NavLink>
             </li>
-
             <li>
-              <Link
-                className="hover:text-blue-500 transition"
-                to="/report-lost"
-              >
+              <NavLink className={footerLinkClass} to="/report-lost">
                 Report Lost
-              </Link>
+              </NavLink>
             </li>
-
             <li>
-              <Link
-                className="hover:text-blue-500 transition"
-                to="/report-found"
-              >
+              <NavLink className={footerLinkClass} to="/report-found">
                 Report Found
-              </Link>
+              </NavLink>
             </li>
-
             <li>
-              <Link
-                className="hover:text-blue-500 transition"
-                to="/dashboard"
-              >
+              <NavLink className={footerLinkClass} to="/dashboard">
                 Dashboard
-              </Link>
+              </NavLink>
             </li>
-
           </ul>
         </div>
 
@@ -87,13 +70,31 @@ function Footer() {
           <h3 className="font-semibold text-white mb-4">POPULAR LOCATIONS</h3>
 
           <ul className="space-y-2 text-sm">
-
-            <li className="hover:text-blue-500 cursor-pointer">Library</li>
-            <li className="hover:text-blue-500 cursor-pointer">Lecture Halls</li>
-            <li className="hover:text-blue-500 cursor-pointer">Student Activity Centre</li>
-            <li className="hover:text-blue-500 cursor-pointer">Hostels</li>
-            <li className="hover:text-blue-500 cursor-pointer">Campus Cafeteria</li>
-
+            <li>
+              <NavLink className={footerLinkClass} to="/browse?location=library">
+                Library
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/browse?location=lecture-halls">
+                Lecture Halls
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/browse?location=sac">
+                Student Activity Centre
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/browse?location=hostels">
+                Hostels
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/browse?location=cafeteria">
+                Campus Cafeteria
+              </NavLink>
+            </li>
           </ul>
         </div>
 
@@ -104,26 +105,36 @@ function Footer() {
           <h3 className="font-semibold text-white mb-4">RESOURCES</h3>
 
           <ul className="space-y-2 text-sm">
-
-            <li className="hover:text-blue-500 cursor-pointer"> <Link to="/work">
-              How It Works
-            </Link></li>
-            <li className="hover:text-blue-500 cursor-pointer"><Link to="/Guide">
-              Safety Guidelines
-            </Link></li>
-            <li className="hover:text-blue-500 cursor-pointer"> <Link to="/Rules">
-              Community Rules
-            </Link></li>
-
+            <li>
+              <NavLink className={footerLinkClass} to="/how-it-works">
+                How It Works
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/safety-guidelines">
+                Safety Guidelines
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/community/rules">
+                Community Rules
+              </NavLink>
+            </li>
           </ul>
 
           <h3 className="font-semibold text-white mt-6 mb-4">CONTACT</h3>
 
           <ul className="space-y-2 text-sm">
-
-            <li className="hover:text-blue-500 cursor-pointer">Support</li>
-            <li className="hover:text-blue-500 cursor-pointer">Report Issue</li>
-
+            <li>
+              <NavLink className={footerLinkClass} to="/support">
+                Support
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/report-issue">
+                Report Issue
+              </NavLink>
+            </li>
           </ul>
         </div>
 
@@ -134,37 +145,36 @@ function Footer() {
           <h3 className="font-semibold text-white mb-4">ABOUT</h3>
 
           <ul className="space-y-2 text-sm">
-
-            <li className="hover:text-blue-500 cursor-pointer">About Platform</li>
-            <li className="hover:text-blue-500 cursor-pointer">Privacy Policy</li>
-            <li className="hover:text-blue-500 cursor-pointer">Terms of Use</li>
-
+            <li>
+              <NavLink className={footerLinkClass} to="/about">
+                About Platform
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/privacy-policy">
+                Privacy Policy
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className={footerLinkClass} to="/terms">
+                Terms of Use
+              </NavLink>
+            </li>
           </ul>
 
           <h3 className="font-semibold text-white mt-6 mb-4">COMMUNITY</h3>
 
           <ul className="space-y-2 text-sm">
-
-            <li className="hover:text-blue-500 cursor-pointer">
-              <a
-                href="https://www.nitrkl.ac.in/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            <li>
+              <NavLink className={footerLinkClass} to="/community/students">
                 Students
-              </a>
+              </NavLink>
             </li>
-
-            <li className="hover:text-blue-500 cursor-pointer">
-              <a
-                href="https://www.nitrkl.ac.in/CDC/ContactUs/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            <li>
+              <NavLink className={footerLinkClass} to="/community/helpdesk">
                 Campus Help Desk
-              </a>
+              </NavLink>
             </li>
-
           </ul>
         </div>
 

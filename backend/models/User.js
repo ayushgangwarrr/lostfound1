@@ -15,6 +15,13 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    rollNumber: {
+      type: String,
+      required: [true, "Roll number is required"],
+      unique: true,
+      trim: true,
+      uppercase: true,
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
@@ -23,6 +30,18 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    resetToken: {
+      type: String,
+      default: null,
+    },
+    resetTokenExpiry: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

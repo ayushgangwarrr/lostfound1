@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchJson } from "../utils/api.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Login() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,12 +18,13 @@ function Login() {
     }
 
     try {
-      await fetchJson("/api/auth/login", {
+      const data = await fetchJson("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
+      setUser(data.user);
       alert("Logged in successfully");
       navigate("/");
     } catch (error) {
@@ -65,6 +68,11 @@ function Login() {
             Login
           </button>
         </form>
+        <p className="text-center text-sm mt-4 text-gray-600">
+          <span onClick={() => navigate("/forgot-password")} className="text-blue-600 cursor-pointer hover:underline">
+            Forgot password?
+          </span>
+        </p>
         <p className="text-center text-sm mt-6 text-gray-600">
           Don't have an account?
           <span onClick={() => navigate("/signup")} className="text-blue-600 cursor-pointer ml-1 hover:underline">
