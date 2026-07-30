@@ -20,7 +20,7 @@ export default function Signup() {
   };
 
   const nextStep = () => {
-    if (!formData.name || !formData.email || !formData.password || !formData.rollNumber || !formData.phone) {
+    if (!formData.name || !formData.email || !formData.password || !formData.rollNumber) {
       alert("Please fill all fields");
       return;
     }
@@ -56,11 +56,7 @@ export default function Signup() {
       <div className="absolute inset-0 bg-black/40"></div>
       <div className="relative bg-white/90 backdrop-blur-lg shadow-2xl rounded-2xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-medium text-left mb-6">
-          Create your
-          <h1 className="font-montserrat font-extrabold text-4xl tracking-tight">
-            LosT <span className="text-blue-500 font-medium text-2xl">& Found</span>
-          </h1>
-          profile
+          Create your <span className="font-montserrat font-extrabold text-4xl tracking-tight">LosT <span className="text-blue-500 font-medium text-2xl">& Found</span></span> profile
         </h2>
         <div className="flex justify-center mb-6 gap-4">
           <div className={`w-8 h-8 flex items-center justify-center rounded-full ${step === 1 ? "bg-blue-600 text-white" : "bg-gray-200"}`}>1</div>

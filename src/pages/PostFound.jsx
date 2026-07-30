@@ -10,7 +10,7 @@ export default function PostFound() {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [rollNumber, setRollNumber] = useState("");
+  const [rollNumber, setRollNumber] = useState(user?.rollNumber || "");
   const [category, setCategory] = useState("Other");
   const [contact, setContact] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -18,23 +18,17 @@ export default function PostFound() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.rollNumber) {
-      setRollNumber(user.rollNumber);
-    }
-  }, [user]);
-
-  useEffect(() => {
     const loadReports = async () => {
       try {
         const data = await fetchJson("/api/reports");
         setRecentReports(data.reports.filter((report) => report.type === "found"));
-      } catch (error) {
-        console.error(error);
+      } catch {
+        console.error("Error loading reports");
       }
     };
 
     loadReports();
-  }, [navigate]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

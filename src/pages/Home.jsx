@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Footer from "../pages/Footer";
-import { useEffect, useState ,useRef} from "react";
-import { motion, useScroll, useSpring, useTransform,AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion as Motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { fetchJson } from "../utils/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -21,17 +21,6 @@ export default function Home() {
     setUser(null);
     navigate("/login");
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-  
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const { scrollY } = useScroll();
 
@@ -59,6 +48,18 @@ export default function Home() {
   const smoothX4 = useSpring(x4, { stiffness: 40, damping: 25 });
   const [open, setOpen] = useState(false);
   const ref = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="min-h-screen w-full bg-slate-950 overflow-x-hidden">
 
@@ -123,7 +124,7 @@ export default function Home() {
                 <AnimatePresence>
                   {open && (
 
-                    <motion.div
+                    <Motion.div
                       initial={{ opacity: 0, rotateX: -90 }}
                       animate={{ opacity: 1, rotateX: 0 }}
                       exit={{ opacity: 0, rotateX: -90 }}
@@ -159,7 +160,7 @@ export default function Home() {
                         Logout
                       </button>
 
-                    </motion.div>
+                    </Motion.div>
 
                   )}
                 </AnimatePresence>
@@ -279,7 +280,7 @@ export default function Home() {
 
             {/* CARD 1 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: smoothY1, x: smoothX1 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -302,12 +303,12 @@ export default function Home() {
                   Posted 2 hours ago
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
 
             {/* CARD 2 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: smoothY2, x: smoothX2 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -330,12 +331,12 @@ export default function Home() {
                   Posted yesterday
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
 
             {/* CARD 3 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: smoothY3, x: smoothX3 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -358,12 +359,12 @@ export default function Home() {
                   Posted 5 hours ago
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
 
             {/* CARD 4 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: smoothY4, x: smoothX4 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -386,8 +387,8 @@ export default function Home() {
                   Posted 3 hours ago
                 </p>
               </div>
-            </motion.div>
-            <motion.div
+            </Motion.div>
+            <Motion.div
               style={{ y: y1, x: x1 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -410,12 +411,12 @@ export default function Home() {
                   Posted 2 hours ago
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
 
             {/* CARD 2 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: y2, x: x2 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -438,12 +439,12 @@ export default function Home() {
                   Posted yesterday
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
 
             {/* CARD 3 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: y3, x: x3 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -466,12 +467,12 @@ export default function Home() {
                   Posted 5 hours ago
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
 
             {/* CARD 4 */}
 
-            <motion.div
+            <Motion.div
               style={{ y: y4, x: x4 }}
               className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
             >
@@ -494,7 +495,7 @@ export default function Home() {
                   Posted 3 hours ago
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
           </div>
 
         </div>

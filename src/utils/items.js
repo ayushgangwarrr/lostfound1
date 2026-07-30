@@ -2,6 +2,6 @@ export const getItems = () => {
   return [];
 };
 
-export const addItem = (_item) => {
+export const addItem = () => {
   return null;
 };

@@ -18,29 +18,53 @@ const setTokenCookie = (res, token) => {
   });
 };
 
+const serializeUser = (user) => ({
+  id: user._id.toString(),
+  _id: user._id.toString(),
+  name: user.name,
+  email: user.email,
+  rollNumber: user.rollNumber,
+  phone: user.phone,
+  isAdmin: user.isAdmin,
+});
+
 export const signup = async (req, res) => {
   const { name, email, password, phone, rollNumber } = req.body;
 
-  if (!name || !email || !password || !rollNumber) {
+  if (!name?.trim() || !email?.trim() || !password || !rollNumber?.trim()) {
     return res.status(400).json({ message: "Name, email, password, and roll number are required" });
   }
 
+  if (password.length < 6) {
+    return res.status(400).json({ message: "Password must be at least 6 characters" });
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedRollNumber = rollNumber.trim().toUpperCase();
+  const normalizedPhone = phone?.trim() || "";
+
+  if (normalizedPhone && !/^\d{10}$/.test(normalizedPhone)) {
+    return res.status(400).json({ message: "Phone number must contain exactly 10 digits" });
+  }
+
   try {
-    const existingUser = await User.findOne({ $or: [{ email }, { rollNumber: rollNumber.trim().toUpperCase() }] });
+    const existingUser = await User.findOne({
+      $or: [{ email: normalizedEmail }, { rollNumber: normalizedRollNumber }],
+    });
     if (existingUser) {
       return res.status(409).json({ message: "Email or roll number already exists" });
     }
 
     const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((item) => item.trim().toLowerCase());
-    const isAdmin = adminEmails.includes(email.toLowerCase());
+    const isAdmin = adminEmails.includes(normalizedEmail);
     const userCount = await User.countDocuments();
 
     const user = await User.create({
-      name,
-      email,
-      rollNumber: rollNumber.trim().toUpperCase(),
+      name: name.trim(),
+      email: normalizedEmail,
+      rollNumber: normalizedRollNumber,
       password,
-      phone,
+      phone: normalizedPhone,
       isAdmin: userCount === 0 || isAdmin,
     });
     const token = generateToken(user._id);
@@ -48,14 +72,7 @@ export const signup = async (req, res) => {
 
     return res.status(201).json({
       message: "User created successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        rollNumber: user.rollNumber,
-        phone: user.phone,
-        isAdmin: user.isAdmin,
-      },
+      user: serializeUser(user),
       token,
     });
   } catch (error) {
@@ -66,6 +83,9 @@ export const signup = async (req, res) => {
         .join(" ");
       return res.status(400).json({ message });
     }
+    if (error.code === 11000) {
+      return res.status(409).json({ message: "Email or roll number already exists" });
+    }
     return res.status(500).json({ message: "Server error while signing up" });
   }
 };
@@ -73,12 +93,12 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
+  if (!email?.trim() || !password) {
     return res.status(400).json({ message: "Email and password are required" });
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -93,14 +113,7 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       message: "Login successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        rollNumber: user.rollNumber,
-        phone: user.phone,
-        isAdmin: user.isAdmin,
-      },
+      user: serializeUser(user),
       token,
     });
   } catch (error) {

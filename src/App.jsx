@@ -18,7 +18,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Work from "./components/Work";
 import Guide from "./components/Guide";
 import Rules from "./components/Rules";
-import Profile from  "./components/profile";
+import Profile from "./components/profile";
 import Reporteditem from "./components/Reporteditem";
 import AdminPanel from "./pages/AdminPanel";
 import HowItWorks from "./pages/HowItWorks";

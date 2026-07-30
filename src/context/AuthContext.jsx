@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await fetchJson("/api/auth/profile");
       setUser(data.profile);
-    } catch (error) {
+    } catch {
       setUser(null);
     } finally {
       setAuthLoading(false);

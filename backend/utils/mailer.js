@@ -43,6 +43,7 @@ export const sendPasswordResetEmail = async (email, resetToken, resetLink) => {
 };
 
 export const sendWelcomeEmail = async (email, name) => {
+  const transporter = getTransporter();
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,

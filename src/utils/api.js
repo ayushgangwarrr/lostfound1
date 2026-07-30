@@ -1,4 +1,28 @@
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const configuredApiBase = import.meta.env.VITE_API_URL || "http://localhost:5001";
+
+// Keep the frontend and API on the same local hostname. `localhost` and
+// `127.0.0.1` are different sites to the browser, so mixing them prevents the
+// authentication cookie from being sent back on profile requests.
+const getApiBase = () => {
+  if (typeof window === "undefined") return configuredApiBase;
+
+  try {
+    const apiUrl = new URL(configuredApiBase);
+    const isLocalApi = ["localhost", "127.0.0.1"].includes(apiUrl.hostname);
+    const isLocalPage = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
+    if (isLocalApi && isLocalPage) {
+      apiUrl.hostname = window.location.hostname;
+      return apiUrl.origin;
+    }
+  } catch {
+    // A relative VITE_API_URL is already suitable for the current origin.
+  }
+
+  return configuredApiBase;
+};
+
+const API_BASE = getApiBase();
 
 export const getAuthHeaders = () => {
   return {};

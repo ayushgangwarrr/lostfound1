@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import createSocket from "../utils/socket.js";
 import { fetchJson } from "../utils/api.js";
 import { useAuth } from "./AuthContext.jsx";
@@ -12,7 +12,7 @@ export function ChatProvider({ children }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [typingState, setTypingState] = useState({});
 
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     if (!user) return;
     try {
       const data = await fetchJson("/api/chat/conversations");
@@ -21,30 +21,23 @@ export function ChatProvider({ children }) {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
-      setConversations([]);
-      setUnreadCount(0);
-      if (socket) {
-        socket.disconnect();
-        setSocket(null);
-      }
       return;
     }
 
-    loadConversations();
     const socketClient = createSocket();
-    setSocket(socketClient);
 
     socketClient.on("connect", () => {
       console.log("Chat socket connected");
+      setSocket(socketClient);
+      loadConversations();
     });
 
-    socketClient.on("receiveMessage", (payload) => {
+    socketClient.on("receiveMessage", () => {
       loadConversations();
-      setUnreadCount((current) => current + 1);
     });
 
     socketClient.on("newMessage", () => {
@@ -71,19 +64,19 @@ export function ChatProvider({ children }) {
       socketClient.disconnect();
       setSocket(null);
     };
-  }, [user]);
+  }, [user, loadConversations]);
 
-  const joinConversation = (conversationId) => {
+  const joinConversation = useCallback((conversationId) => {
     if (!socket || !conversationId) return;
     socket.emit("joinConversation", { conversationId });
-  };
+  }, [socket]);
 
-  const leaveConversation = (conversationId) => {
+  const leaveConversation = useCallback((conversationId) => {
     if (!socket || !conversationId) return;
     socket.emit("leaveConversation", { conversationId });
-  };
+  }, [socket]);
 
-  const sendMessage = async (payload) => {
+  const sendMessage = useCallback(async (payload) => {
     if (socket && socket.connected) {
       socket.emit("sendMessage", payload);
     } else {
@@ -94,9 +87,9 @@ export function ChatProvider({ children }) {
       });
       loadConversations();
     }
-  };
+  }, [socket, loadConversations]);
 
-  const markConversationRead = async (conversationId) => {
+  const markConversationRead = useCallback(async (conversationId) => {
     if (!conversationId) return;
     try {
       await fetchJson(`/api/chat/mark-read/${conversationId}`, { method: "PUT" });
@@ -107,11 +100,23 @@ export function ChatProvider({ children }) {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [socket, loadConversations]);
 
   const value = useMemo(
     () => ({
       socket,
+      conversations: user ? conversations : [],
+      unreadCount: user ? unreadCount : 0,
+      typingState,
+      loadConversations,
+      joinConversation,
+      leaveConversation,
+      sendMessage,
+      markConversationRead,
+    }),
+    [
+      socket,
+      user,
       conversations,
       unreadCount,
       typingState,
@@ -120,8 +125,7 @@ export function ChatProvider({ children }) {
       leaveConversation,
       sendMessage,
       markConversationRead,
-    }),
-    [socket, conversations, unreadCount, typingState]
+    ]
   );
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

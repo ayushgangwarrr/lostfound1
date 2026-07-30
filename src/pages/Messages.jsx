@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchJson } from "../utils/api.js";
@@ -19,7 +19,6 @@ export default function Messages() {
     leaveConversation,
     sendMessage,
     markConversationRead,
-    typingState,
   } = useChat();
 
   const query = useQuery();
@@ -49,11 +48,11 @@ export default function Messages() {
     }));
   }, [search, searchResults, conversations]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
-  const loadMessages = async (conversationId) => {
+  const loadMessages = useCallback(async (conversationId) => {
     if (!conversationId) return;
     setLoading(true);
     try {
@@ -65,7 +64,7 @@ export default function Messages() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [scrollToBottom]);
 
   const selectConversation = async (conversation) => {
     setSelectedConversation(conversation);
@@ -74,7 +73,7 @@ export default function Messages() {
     markConversationRead(conversation.conversationId);
   };
 
-  const openConversationWithUser = async (userToChat) => {
+  const openConversationWithUser = useCallback(async (userToChat) => {
     try {
       const data = await fetchJson("/api/chat/create-conversation", {
         method: "POST",
@@ -100,7 +99,7 @@ export default function Messages() {
       console.error(error);
       alert(error.message || "Unable to open chat with this student.");
     }
-  };
+  }, [joinConversation, loadMessages, markConversationRead, navigate, user]);
 
   useEffect(() => {
     if (!user) return;
@@ -130,7 +129,15 @@ export default function Messages() {
       }
     };
     loadInitialConversation();
-  }, [conversationIdQuery, participantIdQuery, user]);
+  }, [
+    conversationIdQuery,
+    participantIdQuery,
+    user,
+    loadMessages,
+    joinConversation,
+    markConversationRead,
+    openConversationWithUser,
+  ]);
 
   useEffect(() => {
     if (!search.trim()) {
@@ -181,7 +188,7 @@ export default function Messages() {
       socket.off("typing", handleTyping);
       socket.off("stopTyping", handleStopTyping);
     };
-  }, [socket, selectedConversation, user]);
+  }, [socket, selectedConversation, user, loadConversations, markConversationRead]);
 
   useEffect(() => {
     if (!selectedConversation) return;
@@ -189,7 +196,7 @@ export default function Messages() {
     return () => {
       leaveConversation(conversationId);
     };
-  }, [selectedConversation]);
+  }, [selectedConversation, leaveConversation]);
 
   const handleSend = async () => {
     if (!selectedConversation || !messageText.trim()) return;

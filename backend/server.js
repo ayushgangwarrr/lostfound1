@@ -19,6 +19,9 @@ import Conversation from "./models/Conversation.js";
 import Message from "./models/Message.js";
 
 dotenv.config();
+// Optional machine-specific overrides (for example, a local MongoDB instance)
+// stay out of source control via the existing `*.local` ignore rule.
+dotenv.config({ path: ".env.local", override: true });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,17 +32,27 @@ const __dirname = path.dirname(__filename);
 connectDB();
 
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const localFrontendOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+const allowedOrigins = new Set([
+  frontendUrl.replace(/\/$/, ""),
+  ...(process.env.NODE_ENV === "production" ? [] : localFrontendOrigins),
+]);
+const corsOptions = {
+  origin(origin, callback) {
+    // Requests made outside a browser (health checks, curl) have no Origin.
+    if (!origin || allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
+  credentials: true,
+};
 
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-app.use(
-  cors({
-    origin: [frontendUrl],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -59,10 +72,7 @@ app.get("/", (req, res) => {
 
 const httpServer = createServer(app);
 const io = new SocketServer(httpServer, {
-  cors: {
-    origin: [frontendUrl],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 const connectedUsers = new Map();
@@ -86,7 +96,7 @@ io.use((socket, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     socket.userId = decoded.id;
     return next();
-  } catch (error) {
+  } catch (_error) {
     return next(new Error("Authentication error"));
   }
 });
@@ -194,7 +204,7 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Unexpected server error" });
 });
