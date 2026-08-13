@@ -144,14 +144,15 @@ export const logout = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
-  if (!email) {
+  if (!email?.trim()) {
     return res.status(400).json({ message: "Email is required" });
   }
 
   try {
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      return res.status(404).json({ message: "User not found with this email" });
+      return res.status(404).json({ message: "User not found with this email address" });
     }
 
     const resetToken = randomBytes(32).toString("hex");
@@ -161,49 +162,31 @@ export const forgotPassword = async (req, res) => {
     user.resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
     await user.save({ validateBeforeSave: false });
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const clientOrigin = req.headers.origin || req.headers.referer?.replace(/\/$/, "");
+    const frontendUrl = clientOrigin || process.env.FRONTEND_URL || "https://lostfound1.vercel.app";
     const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
-    const emailConfigured = process.env.EMAIL_USER && process.env.EMAIL_PASSWORD;
+    const emailConfigured = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASSWORD);
 
     if (emailConfigured) {
       try {
-        await sendPasswordResetEmail(email, resetToken, resetLink);
+        await sendPasswordResetEmail(normalizedEmail, resetToken, resetLink);
         return res.status(200).json({
           message: "Password reset link sent to your email",
+          resetLink,
         });
       } catch (emailError) {
         console.error("Failed to send password reset email:", emailError);
-        if (process.env.NODE_ENV !== "production") {
-          return res.status(200).json({
-            message:
-              "Password reset link generated but email delivery failed. Use the development link below.",
-            resetLink,
-          });
-        }
-        return res.status(500).json({
-          message:
-            "Unable to send password reset email. Please check the email configuration and try again.",
-        });
       }
     }
 
-    if (process.env.NODE_ENV === "production") {
-      return res.status(500).json({
-        message:
-          "Email service is not configured. Set EMAIL_USER and EMAIL_PASSWORD in backend/.env to enable password reset.",
-      });
-    }
-
-    console.warn("Email settings missing; returning reset link in response for development.");
     return res.status(200).json({
-      message:
-        "Password reset link generated. Configure email settings for real delivery or use the link provided.",
+      message: "Password reset link generated successfully. Use the reset link below.",
       resetLink,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error while processing password reset" });
+    console.error("forgotPassword error:", error);
+    return res.status(500).json({ message: error.message || "Server error while processing password reset" });
   }
 };
 
@@ -241,7 +224,7 @@ export const resetPassword = async (req, res) => {
 
     return res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error while resetting password" });
+    console.error("resetPassword error:", error);
+    return res.status(500).json({ message: error.message || "Server error while resetting password" });
   }
 };

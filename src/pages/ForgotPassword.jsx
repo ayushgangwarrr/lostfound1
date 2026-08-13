@@ -7,7 +7,7 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
+  const [resetUrl, setResetUrl] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,8 +28,11 @@ export default function ForgotPassword() {
       });
 
       setSuccess(true);
-      alert(data.message || "Password reset link has been sent to your email");
-      setTimeout(() => navigate("/login"), 3000);
+      if (data.resetLink) {
+        setResetUrl(data.resetLink);
+      } else {
+        setTimeout(() => navigate("/login"), 4000);
+      }
     } catch (error) {
       setError(error.message || "Failed to send reset email. Please try again.");
       console.error(error);
@@ -52,9 +55,17 @@ export default function ForgotPassword() {
         <p className="text-center text-gray-500 mt-2 mb-6">Enter your email to receive a password reset link</p>
 
         {success ? (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
-            <p className="font-semibold">Success!</p>
-            <p className="text-sm">Check your email for the reset link. Redirecting to login...</p>
+          <div className="bg-green-50 border border-green-300 text-green-800 px-5 py-4 rounded-xl mb-4 space-y-3">
+            <p className="font-bold text-lg">Reset Link Generated!</p>
+            <p className="text-sm text-green-700">A password reset request was created for your account.</p>
+            {resetUrl && (
+              <a
+                href={resetUrl}
+                className="inline-block w-full text-center py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition"
+              >
+                Click Here to Reset Password Now →
+              </a>
+            )}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
