@@ -54,8 +54,8 @@ export const createReport = async (req, res) => {
 
     return res.status(201).json({ message: "Report created", report });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error creating report" });
+    console.error("createReport error:", error);
+    return res.status(500).json({ message: error.message || "Server error creating report" });
   }
 };
 

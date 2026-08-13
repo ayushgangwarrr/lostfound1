@@ -26,16 +26,20 @@ export const uploadImage = async (file) => {
   }
 
   if (hasCloudinaryConfig) {
-    return new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "lostfound" },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        }
-      );
-      stream.end(file.buffer);
-    });
+    try {
+      return await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "lostfound" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        stream.end(file.buffer);
+      });
+    } catch (cloudinaryError) {
+      console.error("Cloudinary upload failed:", cloudinaryError.message || cloudinaryError);
+    }
   }
 
   await fs.promises.mkdir(uploadsDir, { recursive: true });
