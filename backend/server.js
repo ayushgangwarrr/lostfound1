@@ -19,9 +19,9 @@ import Conversation from "./models/Conversation.js";
 import Message from "./models/Message.js";
 
 dotenv.config();
-// Optional machine-specific overrides (for example, a local MongoDB instance)
-// stay out of source control via the existing `*.local` ignore rule.
-dotenv.config({ path: ".env.local", override: true });
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.local", override: true });
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,7 +40,12 @@ const allowedOrigins = new Set([
 const corsOptions = {
   origin(origin, callback) {
     // Requests made outside a browser (health checks, curl) have no Origin.
-    if (!origin || allowedOrigins.has(origin)) {
+    if (
+      !origin ||
+      allowedOrigins.has(origin) ||
+      (origin && origin.endsWith(".vercel.app")) ||
+      (origin && origin.endsWith(".onrender.com"))
+    ) {
       return callback(null, true);
     }
     return callback(new Error(`Origin ${origin} is not allowed by CORS`));

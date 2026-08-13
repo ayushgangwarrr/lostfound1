@@ -4,7 +4,7 @@ import API_BASE from "./api.js";
 const createSocket = () => {
   return io(API_BASE, {
     withCredentials: true,
-    transports: ["websocket"],
+    transports: ["polling", "websocket"],
     autoConnect: true,
   });
 };
