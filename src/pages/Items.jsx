@@ -146,28 +146,59 @@ export default function Items() {
         ) : filteredItems.length === 0 ? (
           <p className="text-gray-400">No items match your search or filters.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
             {filteredItems.map((item) => (
-              <button
+              <div
                 key={item._id}
                 onClick={() => navigate(`/items/${item._id}`)}
-                className="text-left bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition"
+                className="group cursor-pointer rounded-2xl bg-slate-900/90 border border-slate-800/80 shadow-xl flex flex-col justify-between overflow-hidden hover:scale-[1.02] hover:-translate-y-1.5 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300"
               >
-                {item.image ? (
-                  <img src={resolveImageUrl(item.image)} alt={item.itemName} className="w-full h-44 object-cover" />
-                ) : (
-                  <div className="h-44 w-full bg-slate-700 flex items-center justify-center text-gray-400">No image</div>
-                )}
-                <div className="p-4">
-                  <h3 className="text-white font-semibold text-lg">{item.itemName}</h3>
-                  <p className="text-gray-400 text-sm mt-1">{item.location}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="text-xs uppercase tracking-wide text-blue-400">{item.type}</span>
-                    <span className="text-xs uppercase tracking-wide text-gray-400">{item.category || "Other"}</span>
+                {/* Image Container with Fixed Height */}
+                <div className="relative h-48 w-full overflow-hidden bg-slate-950 flex-shrink-0">
+                  <img
+                    src={resolveImageUrl(item.image)}
+                    alt={item.itemName}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    <span
+                      className={`px-3 py-1 text-xs font-extrabold uppercase tracking-wider rounded-full backdrop-blur-md shadow-md ${
+                        item.type === "lost"
+                          ? "bg-rose-500/90 text-white"
+                          : "bg-emerald-500/90 text-white"
+                      }`}
+                    >
+                      {item.type}
+                    </span>
                   </div>
-                  <p className="text-gray-400 text-xs mt-2">Reported by {item.userId?.name || item.personName || "Unknown"}</p>
+                  <div className="absolute bottom-3 right-3">
+                    <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-md bg-slate-900/80 text-slate-300 border border-slate-700/60 backdrop-blur-md">
+                      {item.category || "Other"}
+                    </span>
+                  </div>
                 </div>
-              </button>
+
+                {/* Card Details */}
+                <div className="p-5 flex flex-col flex-1 justify-between gap-3">
+                  <div>
+                    <h3 className="text-white font-bold text-lg leading-snug group-hover:text-blue-400 transition-colors">
+                      {item.itemName}
+                    </h3>
+                    <p className="text-slate-400 text-sm mt-1.5 flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="truncate">{item.location}</span>
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <span className="truncate">By {item.userId?.name || item.personName || "Student"}</span>
+                    <span className="text-blue-400 font-semibold group-hover:underline shrink-0">View details →</span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
