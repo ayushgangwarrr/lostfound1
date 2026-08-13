@@ -34,7 +34,9 @@ export const getAuthHeaders = () => {
 };
 
 export const resolveImageUrl = (imagePath) => {
-  if (!imagePath) return null;
+  if (!imagePath) {
+    return "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=600&auto=format&fit=crop";
+  }
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
     return imagePath;
   }
