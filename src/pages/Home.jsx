@@ -260,246 +260,111 @@ export default function Home() {
       </section>
 
       <section className="bg-slate-950 py-20 px-6">
-
         <div className="max-w-7xl mx-auto">
-
           {/* Section Heading */}
-
           <div className="text-center mb-14">
-            <h2 className="text-4xl  text-white mb-4">
+            <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">
               RECENTLY REPORTED ITEMS
             </h2>
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-lg max-w-xl mx-auto">
               Help students recover their belongings on campus.
             </p>
           </div>
 
-          {/* Items Grid */}
+          {/* Items Grid - Perfectly Symmetric */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
+            {[
+              {
+                id: "card-1",
+                itemName: "Black Wallet",
+                location: "Found near SAC",
+                timeAgo: "Posted 2 hours ago",
+                type: "found",
+                category: "Accessories",
+                image: "/image/wallet.png",
+              },
+              {
+                id: "card-2",
+                itemName: "MacBook Charger",
+                location: "LT Building",
+                timeAgo: "Posted yesterday",
+                type: "lost",
+                category: "Electronics",
+                image: "/image/mac.png",
+              },
+              {
+                id: "card-3",
+                itemName: "Student ID Card",
+                location: "Library Entrance",
+                timeAgo: "Posted 5 hours ago",
+                type: "found",
+                category: "Documents",
+                image: "/image/id.png",
+              },
+              {
+                id: "card-4",
+                itemName: "Room Keys",
+                location: "Hall 5",
+                timeAgo: "Posted 3 hours ago",
+                type: "lost",
+                category: "Keys",
+                image: "/image/key.png",
+              },
+            ].map((item) => (
+              <div
+                key={item.id}
+                onClick={() => navigate("/items")}
+                className="group cursor-pointer rounded-2xl bg-slate-900/90 border border-slate-800/80 shadow-xl flex flex-col justify-between overflow-hidden hover:scale-[1.02] hover:-translate-y-1.5 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300"
+              >
+                {/* Image Container with Fixed Height & Aspect Ratio */}
+                <div className="relative h-48 w-full overflow-hidden bg-slate-950 flex-shrink-0">
+                  <img
+                    src={item.image}
+                    alt={item.itemName}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    <span
+                      className={`px-3 py-1 text-xs font-extrabold uppercase tracking-wider rounded-full backdrop-blur-md shadow-md ${
+                        item.type === "lost"
+                          ? "bg-rose-500/90 text-white"
+                          : "bg-emerald-500/90 text-white"
+                      }`}
+                    >
+                      {item.type}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 right-3">
+                    <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-md bg-slate-900/80 text-slate-300 border border-slate-700/60 backdrop-blur-md">
+                      {item.category}
+                    </span>
+                  </div>
+                </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {/* Card Details */}
+                <div className="p-5 flex flex-col flex-1 justify-between gap-3">
+                  <div>
+                    <h3 className="text-white font-bold text-lg leading-snug group-hover:text-blue-400 transition-colors">
+                      {item.itemName}
+                    </h3>
+                    <p className="text-slate-400 text-sm mt-1.5 flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="truncate">{item.location}</span>
+                    </p>
+                  </div>
 
-            {/* CARD 1 */}
-
-            <Motion.div
-              style={{ y: smoothY1, x: smoothX1 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-                src="/image/wallet.png"
-                alt="wallet"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  Black Wallet
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  Found near SAC
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted 2 hours ago
-                </p>
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <span>{item.timeAgo}</span>
+                    <span className="text-blue-400 font-semibold group-hover:underline">View details →</span>
+                  </div>
+                </div>
               </div>
-            </Motion.div>
-
-
-            {/* CARD 2 */}
-
-            <Motion.div
-              style={{ y: smoothY2, x: smoothX2 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-                 src="/image/mac.png"
-                alt="laptop"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  MacBook Charger
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  LT Building
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted yesterday
-                </p>
-              </div>
-            </Motion.div>
-
-
-            {/* CARD 3 */}
-
-            <Motion.div
-              style={{ y: smoothY3, x: smoothX3 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-                src="/image/id.png"
-                alt="id"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  Student ID Card
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  Library Entrance
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted 5 hours ago
-                </p>
-              </div>
-            </Motion.div>
-
-
-            {/* CARD 4 */}
-
-            <Motion.div
-              style={{ y: smoothY4, x: smoothX4 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-              src="/image/key.png"
-                alt="keys"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  Room Keys
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  Hall 5
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted 3 hours ago
-                </p>
-              </div>
-            </Motion.div>
-            <Motion.div
-              style={{ y: y1, x: x1 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-               src="/image/wallet.png"
-                alt="wallet"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  Black Wallet
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  Found near SAC
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted 2 hours ago
-                </p>
-              </div>
-            </Motion.div>
-
-
-            {/* CARD 2 */}
-
-            <Motion.div
-              style={{ y: y2, x: x2 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-          src="/image/wallet.png"
-                alt="laptop"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  MacBook Charger
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  LT Building
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted yesterday
-                </p>
-              </div>
-            </Motion.div>
-
-
-            {/* CARD 3 */}
-
-            <Motion.div
-              style={{ y: y3, x: x3 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-                src="/image/wallet.png"
-                alt="id"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  Student ID Card
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  Library Entrance
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted 5 hours ago
-                </p>
-              </div>
-            </Motion.div>
-
-
-            {/* CARD 4 */}
-
-            <Motion.div
-              style={{ y: y4, x: x4 }}
-              className="rounded-xl bg-slate-950 px-8 py-3 text-white shadow-lg shadow-blue-600/30 hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            >
-              <img
-          src="/image/wallet.png"
-                alt="keys"
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="text-white font-semibold text-lg">
-                  Room Keys
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-1">
-                  Hall 5
-                </p>
-
-                <p className="text-gray-500 text-xs mt-2">
-                  Posted 3 hours ago
-                </p>
-              </div>
-            </Motion.div>
+            ))}
           </div>
-
         </div>
-
       </section>
 
       <section className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 py-16 px-6">
