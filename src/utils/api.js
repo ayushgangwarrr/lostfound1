@@ -1,4 +1,9 @@
-const configuredApiBase = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const defaultProductionApi = "https://lostfound1-wfyy.onrender.com";
+const configuredApiBase =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === "production" || (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1")
+    ? defaultProductionApi
+    : "http://localhost:5001");
 
 // Keep the frontend and API on the same local hostname. `localhost` and
 // `127.0.0.1` are different sites to the browser, so mixing them prevents the
