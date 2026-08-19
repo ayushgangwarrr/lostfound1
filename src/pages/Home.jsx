@@ -1,323 +1,199 @@
 import { Link, useNavigate } from "react-router-dom";
 import Footer from "../pages/Footer";
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion as Motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { fetchJson } from "../utils/api.js";
-import { useAuth } from "../context/AuthContext.jsx";
-
-
-
+import Navbar from "../components/Navbar";
+import Tilt3DCard from "../components/Tilt3DCard";
+import GlassBackground from "../components/GlassBackground";
+import GlassHero3D from "../components/GlassHero3D";
 
 export default function Home() {
-  const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await fetchJson("/api/auth/logout", { method: "POST" });
-    } catch (error) {
-      console.error(error);
-    }
-    setUser(null);
-    navigate("/login");
-  };
+  const recentDemoItems = [
+    {
+      id: "card-1",
+      itemName: "Black Leather Wallet",
+      location: "Found near SAC Arena",
+      timeAgo: "Posted 2 hours ago",
+      type: "found",
+      category: "Accessories",
+      image: "/image/wallet.png",
+    },
+    {
+      id: "card-2",
+      itemName: "MacBook Pro Charger",
+      location: "LT Building - Room 204",
+      timeAgo: "Posted yesterday",
+      type: "lost",
+      category: "Electronics",
+      image: "/image/mac.png",
+    },
+    {
+      id: "card-3",
+      itemName: "NIT Rourkela Student ID",
+      location: "Central Library Entrance",
+      timeAgo: "Posted 5 hours ago",
+      type: "found",
+      category: "Documents",
+      image: "/image/id.png",
+    },
+    {
+      id: "card-4",
+      itemName: "Room Keys Set (Keyring #5)",
+      location: "Hall 5 West Wing",
+      timeAgo: "Posted 3 hours ago",
+      type: "lost",
+      category: "Keys",
+      image: "/image/key.png",
+    },
+  ];
 
-  const { scrollY } = useScroll();
-
-  // small vertical movement
-  const y1 = useTransform(scrollY, [0, 600], [0, -20]);
-  const y2 = useTransform(scrollY, [0, 600], [0, 20]);
-  const y3 = useTransform(scrollY, [0, 600], [0, -20]);
-  const y4 = useTransform(scrollY, [0, 600], [0, 20]);
-
-  // tiny horizontal drift (~2px)
-  const x1 = useTransform(scrollY, [0, 600], [0, 2]);
-  const x2 = useTransform(scrollY, [0, 600], [0, -2]);
-  const x3 = useTransform(scrollY, [0, 600], [0, 2]);
-  const x4 = useTransform(scrollY, [0, 600], [0, -2]);
-
-  
-  const smoothY1 = useSpring(y1, { stiffness: 40, damping: 25 });
-  const smoothY2 = useSpring(y2, { stiffness: 40, damping: 25 });
-  const smoothY3 = useSpring(y3, { stiffness: 40, damping: 25 });
-  const smoothY4 = useSpring(y4, { stiffness: 40, damping: 25 });
-
-  const smoothX1 = useSpring(x1, { stiffness: 40, damping: 25 });
-  const smoothX2 = useSpring(x2, { stiffness: 40, damping: 25 });
-  const smoothX3 = useSpring(x3, { stiffness: 40, damping: 25 });
-  const smoothX4 = useSpring(x4, { stiffness: 40, damping: 25 });
-  const [open, setOpen] = useState(false);
-  const ref = useRef();
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const featureCards = [
+    {
+      title: "Report Lost Item",
+      icon: "🔍",
+      desc: "Instantly report lost belongings on campus with location tags and images for swift student tracking.",
+      link: "/report-lost",
+      btnText: "Report Lost Item →",
+    },
+    {
+      title: "Report Found Item",
+      icon: "🎁",
+      desc: "Found an item? Post it securely so the owner can verify ownership and arrange pick up.",
+      link: "/report-found",
+      btnText: "Report Found Item →",
+    },
+    {
+      title: "Browse All Items",
+      icon: "🗂️",
+      desc: "Search & filter through live lost and found records across all NIT Rourkela hostels & halls.",
+      link: "/items",
+      btnText: "Explore Directory →",
+    },
+    {
+      title: "Direct Messaging",
+      icon: "💬",
+      desc: "Connect directly with finders or owners via encrypted real-time socket messaging.",
+      link: "/messages",
+      btnText: "Open Messages →",
+    },
+    {
+      title: "Campus Locations",
+      icon: "📍",
+      desc: "Categorized by Library, SAC, Lecture Halls, Cafeteria, and Hostels for pinpoint recovery.",
+      link: "/items",
+      btnText: "View Map Locations →",
+    },
+    {
+      title: "Secure Verification",
+      icon: "🛡️",
+      desc: "Roll-number verified accounts ensure items are safely returned to genuine owners.",
+      link: "/dashboard",
+      btnText: "Go to Dashboard →",
+    },
+  ];
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 overflow-x-hidden">
+    <div className="relative min-h-screen w-full bg-slate-950 text-white overflow-x-hidden">
+      {/* 3D Ambient Glass Background */}
+      <GlassBackground />
 
-      {/* ================= NAVBAR ================= */}
-
-      <div className="bg-slate-950 text-white p-6 mb-3.5 flex items-center justify-between flex-wrap">
-
-        <h1 onClick={() => navigate("/")} className="font-montserrat cursor-pointer font-extrabold text-5xl tracking-tight">
-          LosT  <span className="text-blue-500 font-medium text-3xl">& Found</span>
-        </h1>
-
-
-        <ul className="hidden md:flex gap-8 text-1xl font-semibold">
-
-          <Link className="relative group hover:text-blue-500 transition-all" to="/items">
-            BROWSE ITEMS
-            <span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-blue-500 transition-all duration-[1000ms] group-hover:w-full"></span>
-          </Link>
-
-          <Link className="relative group hover:text-blue-500 transition-all" to="/report-lost">
-            REPORT LOST
-            <span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-blue-500 transition-all duration-[1000ms] group-hover:w-full"></span>
-          </Link>
-
-          <Link className="relative group hover:text-blue-500 transition-all" to="/report-found">
-            REPORT FOUND
-            <span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-blue-500 transition-all duration-[1000ms] group-hover:w-full"></span>
-          </Link>
-
-          <Link className="relative group hover:text-blue-500 transition-all" to="/dashboard">
-            DASHBOARD
-            <span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-blue-500 transition-all duration-[1000ms] group-hover:w-full"></span>
-          </Link>
-
-        </ul>
-
-
-
-
-
-        <div className="flex gap-4">
-        {/* <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold">
-  {user.name?.charAt(0)}
-</div> */}
-
-          {user ? (
-
-            <div className="flex items-center gap-4">
-
-              <div  ref={ref} className=" relative">
-
-                {/* USER NAME */}
-                <button
-                  onClick={() => setOpen(!open)}
-                  className="font-semibold hover:text-blue-400"
-                >
-                  {user.name || user.email}
-                </button>
-
-                {/* DROPDOWN */}
-
-                <AnimatePresence>
-                  {open && (
-
-                    <Motion.div
-                      initial={{ opacity: 0, rotateX: -90 }}
-                      animate={{ opacity: 1, rotateX: 0 }}
-                      exit={{ opacity: 0, rotateX: -90 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute right-0 mt-3 w-52 bg-slate-900 border border-gray-700 rounded-xl shadow-lg p-2"
-                    >
-
-                      <button
-                        onClick={() => navigate("/profile")}
-                        className="block w-full text-left px-4 py-2 hover:bg-slate-800 rounded"
-                      >
-                        Profile
-                      </button>
-
-                      <button
-                        onClick={() => navigate("/my-items")}
-                        className="block w-full text-left px-4 py-2 hover:bg-slate-800 rounded"
-                      >
-                        Reported Items
-                      </button>
-
-                      <button
-                        onClick={() => navigate("/messages")}
-                        className="block w-full text-left px-4 py-2 hover:bg-slate-800 rounded"
-                      >
-                        Messages
-                      </button>
-
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 hover:bg-red-600 rounded"
-                      >
-                        Logout
-                      </button>
-
-                    </Motion.div>
-
-                  )}
-                </AnimatePresence>
-
-              </div>
-
-              <button
-                onClick={handleLogout}
-                className="border px-4 py-2 rounded hover:text-blue-500"
-              >
-                Logout
-              </button>
-
-            </div>
-
-          ) : (
-
-            <>
-              <Link to="/login">
-                <button className="bg-slate-950 hover:bg-blue-700 px-8 py-3 rounded-xl text-white font-semibold shadow-lg shadow-blue-500/30 transition">
-                  Login
-                </button>
-              </Link>
-
-              <Link to="/signup">
-                <button className="bg-slate-950 hover:bg-blue-700 px-8 py-3 rounded-xl text-white font-semibold shadow-lg shadow-blue-500/30 transition">
-                  Sign up →
-                </button>
-              </Link>
-            </>
-
-          )}
-
-        </div>
-
-      </div>
+      {/* Floating Glass Navbar */}
+      <Navbar />
 
       {/* ================= HERO SECTION ================= */}
+      <section className="relative z-10 w-full pt-10 pb-24 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Column: Heading & Call To Action */}
+          <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300 text-xs font-semibold uppercase tracking-wider backdrop-blur-xl shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
+              Official Campus Recovery Portal
+            </div>
 
-      <section className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 py-28 gap-16">
-
-          {/* LEFT CONTENT */}
-
-          <div className="max-w-xl text-center md:text-left space-y-8">
-
-            <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
-              Lost Something on
-              <span className="text-blue-500"> Campus?</span>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
+              Lost Something on{" "}
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_10px_25px_rgba(59,130,246,0.3)]">
+                Campus?
+              </span>
             </h1>
 
-            <p className="text-gray-300 text-lg">
-              A simple platform for NIT Rourkela students to report lost items,
-              return found belongings, and reconnect people with what matters.
+            <p className="text-gray-300 text-lg sm:text-xl font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              A high-performance 3D glass platform for NIT Rourkela students to report lost belongings, return found items, and reconnect in real-time.
             </p>
 
-            {/* BUTTONS */}
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-
+            {/* 3D Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start pt-2">
               <Link
                 to="/report-lost"
-                className="bg-slate-950 hover:bg-blue-700 px-8 py-3 rounded-xl text-white font-semibold shadow-lg shadow-blue-600/30 transition"
+                className="glass-button px-8 py-4 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 group"
               >
-                Report Lost
+                <span>Report Lost Item</span>
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
               </Link>
 
               <Link
                 to="/report-found"
-                className="bg-slate-950 hover:bg-blue-700 px-8 py-3 rounded-xl text-white font-semibold shadow-lg shadow-blue-600/30 transition"
+                className="px-8 py-4 rounded-2xl bg-white/5 border border-white/15 text-white font-semibold text-lg flex items-center justify-center gap-2 hover:bg-white/10 hover:border-blue-400/40 backdrop-blur-xl transition shadow-xl"
               >
-                Report Found
+                <span>Report Found Item</span>
+                <span>✨</span>
               </Link>
-
             </div>
 
+            {/* Live Stats Quick Pill Grid */}
+            <div className="grid grid-cols-3 gap-4 pt-8 max-w-md mx-auto lg:mx-0 border-t border-white/10">
+              <div className="text-left">
+                <p className="text-2xl font-extrabold text-white">99%</p>
+                <p className="text-xs text-gray-400 font-medium">Campus Match Rate</p>
+              </div>
+              <div className="text-left">
+                <p className="text-2xl font-extrabold text-blue-400">1,500+</p>
+                <p className="text-xs text-gray-400 font-medium">Items Recovered</p>
+              </div>
+              <div className="text-left">
+                <p className="text-2xl font-extrabold text-cyan-400">&lt; 24h</p>
+                <p className="text-xs text-gray-400 font-medium">Average Claim Time</p>
+              </div>
+            </div>
           </div>
 
-          {/* RIGHT IMAGE */}
-
-          <div className="relative">
-
-            <img
-              src="/image/nit.png"
-              alt="campus"
-              className="w-[520px] max-w-full rounded-xl shadow-2xl"
-            />
-
-            {/* glow background */}
-            <div className="absolute -z-10 w-96 h-96 bg-blue-600 blur-[120px] opacity-30 top-10 left-10"></div>
-
+          {/* Right Column: 3D Interactive Hero Canvas Visual */}
+          <div className="lg:col-span-5">
+            <GlassHero3D />
           </div>
-
         </div>
-
       </section>
 
-      <section className="bg-slate-950 py-20 px-6">
+      {/* ================= RECENTLY REPORTED ITEMS TICKER/GRID ================= */}
+      <section className="relative z-10 py-20 px-6 border-t border-white/10 bg-slate-950/40 backdrop-blur-md">
         <div className="max-w-7xl mx-auto">
-          {/* Section Heading */}
-          <div className="text-center mb-14">
-            <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">
-              RECENTLY REPORTED ITEMS
-            </h2>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">
-              Help students recover their belongings on campus.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div>
+              <div className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
+                Live Feed
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                RECENTLY REPORTED ITEMS
+              </h2>
+            </div>
+            <button
+              onClick={() => navigate("/items")}
+              className="text-blue-400 hover:text-blue-300 font-semibold text-sm flex items-center gap-1.5 group"
+            >
+              <span>Explore all records</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </button>
           </div>
 
-          {/* Items Grid - Perfectly Symmetric */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
-            {[
-              {
-                id: "card-1",
-                itemName: "Black Wallet",
-                location: "Found near SAC",
-                timeAgo: "Posted 2 hours ago",
-                type: "found",
-                category: "Accessories",
-                image: "/image/wallet.png",
-              },
-              {
-                id: "card-2",
-                itemName: "MacBook Charger",
-                location: "LT Building",
-                timeAgo: "Posted yesterday",
-                type: "lost",
-                category: "Electronics",
-                image: "/image/mac.png",
-              },
-              {
-                id: "card-3",
-                itemName: "Student ID Card",
-                location: "Library Entrance",
-                timeAgo: "Posted 5 hours ago",
-                type: "found",
-                category: "Documents",
-                image: "/image/id.png",
-              },
-              {
-                id: "card-4",
-                itemName: "Room Keys",
-                location: "Hall 5",
-                timeAgo: "Posted 3 hours ago",
-                type: "lost",
-                category: "Keys",
-                image: "/image/key.png",
-              },
-            ].map((item) => (
-              <div
+          {/* 3D Glass Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {recentDemoItems.map((item) => (
+              <Tilt3DCard
                 key={item.id}
                 onClick={() => navigate("/items")}
-                className="group cursor-pointer rounded-2xl bg-slate-900/90 border border-slate-800/80 shadow-xl flex flex-col justify-between overflow-hidden hover:scale-[1.02] hover:-translate-y-1.5 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300"
+                className="cursor-pointer group flex flex-col justify-between"
               >
-                {/* Image Container with Fixed Height & Aspect Ratio */}
-                <div className="relative h-48 w-full overflow-hidden bg-slate-950 flex-shrink-0">
+                <div className="relative h-48 w-full overflow-hidden bg-slate-950/60">
                   <img
                     src={item.image}
                     alt={item.itemName}
@@ -335,152 +211,97 @@ export default function Home() {
                     </span>
                   </div>
                   <div className="absolute bottom-3 right-3">
-                    <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-md bg-slate-900/80 text-slate-300 border border-slate-700/60 backdrop-blur-md">
+                    <span className="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-slate-900/80 text-slate-300 border border-white/10 backdrop-blur-md">
                       {item.category}
                     </span>
                   </div>
                 </div>
 
-                {/* Card Details */}
-                <div className="p-5 flex flex-col flex-1 justify-between gap-3">
+                <div className="p-5 flex flex-col justify-between flex-1 gap-3">
                   <div>
-                    <h3 className="text-white font-bold text-lg leading-snug group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-white font-bold text-lg group-hover:text-blue-400 transition-colors">
                       {item.itemName}
                     </h3>
-                    <p className="text-slate-400 text-sm mt-1.5 flex items-center gap-1.5">
-                      <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
+                    <p className="text-slate-300 text-xs mt-1.5 flex items-center gap-1.5">
+                      <span className="text-blue-400">📍</span>
                       <span className="truncate">{item.location}</span>
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-medium">
+                  <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400 font-medium">
                     <span>{item.timeAgo}</span>
-                    <span className="text-blue-400 font-semibold group-hover:underline">View details →</span>
+                    <span className="text-blue-400 font-semibold group-hover:underline">Details →</span>
                   </div>
                 </div>
-              </div>
+              </Tilt3DCard>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 py-16 px-6">
-
-        {[
-          {
-            title: "Report Lost Item",
-            desc: "Quickly report items you lost on campus and notify other students to help locate them."
-          },
-          {
-            title: "Report Found Item",
-            desc: "Found something on campus? Post it here so the rightful owner can claim it."
-          },
-          {
-            title: "Browse Lost Items",
-            desc: "Search through recently reported lost items across campus locations."
-          },
-          {
-            title: "Browse Found Items",
-            desc: "Check items that others have found and posted to reconnect with your belongings."
-          },
-          {
-            title: "Campus Locations",
-            desc: "Track items reported from hostels, lecture halls, library, and common campus spots."
-          },
-          {
-            title: "Secure Recovery",
-            desc: "Connect safely with the person who found your item and arrange a pickup."
-          }
-        ].map((card) => (
-          <div
-            key={card.title}
-            className="border  rounded-lg p-6 transition duration-300 group hover:-translate-y-2 hover:shadow-xl hover:border-blue-500 bg-slate-950"
-          >
-
-            <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition">
-              {card.title}
-            </h3>
-
-            <p className="text-gray-600 mb-4">
-              {card.desc}
-            </p>
-
-            <a className="text-blue-600 font-semibold cursor-pointer">
-              Learn More →
-            </a>
-
+      {/* ================= 3D FEATURE HIGHLIGHT CARDS ================= */}
+      <section className="relative z-10 max-w-7xl mx-auto py-24 px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-block px-3 py-1 rounded-full bg-purple-500/10 border border-purple-400/20 text-purple-300 text-xs font-bold uppercase tracking-wider">
+            Features & Capabilities
           </div>
-        ))}
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+            Designed for Campus Reconnection
+          </h2>
+          <p className="text-gray-300 text-base sm:text-lg">
+            Experience ultra-responsive search, real-time messaging, and verified campus item matching.
+          </p>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featureCards.map((card) => (
+            <Tilt3DCard key={card.title} className="p-8 flex flex-col justify-between group">
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600/30 to-indigo-600/30 border border-white/15 flex items-center justify-center text-3xl mb-6 shadow-inner group-hover:scale-110 transition-transform">
+                  {card.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                  {card.title}
+                </h3>
+                <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                  {card.desc}
+                </p>
+              </div>
+
+              <Link
+                to={card.link}
+                className="text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:text-blue-300 transition"
+              >
+                <span>{card.btnText}</span>
+              </Link>
+            </Tilt3DCard>
+          ))}
+        </div>
       </section>
-      <div className="bg-slate-950 h-max w-full flex items-center justify-center gap-10 py-20">
 
-        <div className="max-w-5xl mx-auto px-6 leading-tight text-left">
-          <h1 className="text-white font-bold text-4xl leading-tight">
-            The smart <span className="text-blue-600">Lost & Found</span> platform for your campus
-          </h1>
-        </div>
+      {/* ================= MARQUEE BANNER ================= */}
+      <section className="relative z-10 py-16 bg-slate-950/80 border-y border-white/10 backdrop-blur-xl">
+        <div className="relative overflow-hidden w-full">
+          <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-slate-950 to-transparent z-10" />
+          <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-slate-950 to-transparent z-10" />
 
+          <div className="flex whitespace-nowrap gap-16 text-xl font-bold tracking-widest text-blue-400/90 animate-marquee uppercase">
+            <span>✨ Report Lost Items</span>
+            <span>⚡ Real-Time Socket Chat</span>
+            <span>📍 NIT Rourkela Campus Coverage</span>
+            <span>📦 Instant Found Item Posting</span>
+            <span>🛡️ Verified Student Profiles</span>
 
-        <div className="relative overflow-hidden py-10 bg-slate-950 w-full">
-
-          {/* Blur edges */}
-          <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-slate-950 to-transparent z-10"></div>
-          <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-slate-950 to-transparent z-10"></div>
-
-          {/* Scrolling text */}
-          <div className="flex whitespace-nowrap gap-16 text-xl font-semibold text-blue-500 animate-marquee">
-
-            <span>Report Lost Items</span>
-            <span>Report Found Items</span>
-            <span>Browse Campus Items</span>
-            <span>Recover Your Belongings</span>
-            <span>Connect With Students</span>
-
-            {/* duplicate for infinite loop */}
-            <span>Report Lost Items</span>
-            <span>Report Found Items</span>
-            <span>Browse Campus Items</span>
-            <span>Recover Your Belongings</span>
-            <span>Connect With Students</span>
-
+            <span>✨ Report Lost Items</span>
+            <span>⚡ Real-Time Socket Chat</span>
+            <span>📍 NIT Rourkela Campus Coverage</span>
+            <span>📦 Instant Found Item Posting</span>
+            <span>🛡️ Verified Student Profiles</span>
           </div>
-
         </div>
+      </section>
 
-      </div>
       <Footer />
-      {/* <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center gap-6">
-
-        <h1 className="text-4xl font-bold">
-          Lost & Found Platform
-        </h1>
-
-        <div className="flex gap-6">
-
-          <Link to="/report-lost" className="bg-blue-600 px-5 py-3 rounded">
-            Report Lost
-          </Link>
-
-          <Link to="/report-found" className="bg-green-600 px-5 py-3 rounded">
-            Report Found
-          </Link>
-
-          <Link to="/items" className="bg-purple-600 px-5 py-3 rounded">
-            Browse Items
-          </Link>
-
-          <Link to="/dashboard" className="bg-yellow-600 px-5 py-3 rounded">
-            Dashboard
-          </Link>
-
-        </div>
-
-      </div> */}
-
     </div>
   );
 }
