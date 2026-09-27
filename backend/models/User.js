@@ -47,6 +47,9 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Sparse index: only indexes documents where resetToken exists
+userSchema.index({ resetToken: 1 }, { sparse: true });
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();

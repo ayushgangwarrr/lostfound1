@@ -1,0 +1,80 @@
+{
+  "1. Global Item Feed (sort: createdAt DESC)": {
+    "description": "Feed browsing: Report.find().sort({ createdAt: -1 }).limit(20)",
+    "stage": "LIMIT -> FETCH",
+    "totalDocsExamined": 20,
+    "nReturned": 20,
+    "serverExecutionTimeMillis": 6,
+    "latencies": {
+      "mean": 0.91,
+      "p50": 0.77,
+      "p95": 1.71,
+      "p99": 1.92
+    }
+  },
+  "2. User's Item Reports (userId + sort createdAt)": {
+    "description": "My reports: Report.find({ userId }).sort({ createdAt: -1 })",
+    "stage": "FETCH -> IXSCAN",
+    "totalDocsExamined": 20,
+    "nReturned": 20,
+    "serverExecutionTimeMillis": 40,
+    "latencies": {
+      "mean": 0.77,
+      "p50": 0.73,
+      "p95": 1.12,
+      "p99": 1.41
+    }
+  },
+  "3. Filtered Search (type + category + sort)": {
+    "description": "Filter items: Report.find({ type: 'lost', category: 'Electronics' }).sort({ createdAt: -1 }).limit(20)",
+    "stage": "LIMIT -> FETCH",
+    "totalDocsExamined": 20,
+    "nReturned": 20,
+    "serverExecutionTimeMillis": 3,
+    "latencies": {
+      "mean": 0.94,
+      "p50": 0.72,
+      "p95": 1,
+      "p99": 7.29
+    }
+  },
+  "4. Unread Messages Count (convId + receiverId + readStatus)": {
+    "description": "Inbox badge count: Message.countDocuments({ conversationId, receiverId, readStatus: false })",
+    "stage": "FETCH -> IXSCAN",
+    "totalDocsExamined": 0,
+    "nReturned": 0,
+    "serverExecutionTimeMillis": 3,
+    "latencies": {
+      "mean": 12.13,
+      "p50": 0.89,
+      "p95": 6.79,
+      "p99": 315.73
+    }
+  },
+  "5. Mark Conversation Read (updateMany readStatus)": {
+    "description": "Read receipts: Message.updateMany({ conversationId, receiverId, readStatus: false }, { readStatus: true })",
+    "stage": "FETCH -> IXSCAN",
+    "totalDocsExamined": 0,
+    "nReturned": 0,
+    "serverExecutionTimeMillis": 0,
+    "latencies": {
+      "mean": 0.93,
+      "p50": 0.53,
+      "p95": 0.95,
+      "p99": 12.03
+    }
+  },
+  "6. User Search by Name / Roll Number": {
+    "description": "User search: User.find({ name: /^Bench/i }).limit(20)",
+    "stage": "LIMIT -> COLLSCAN",
+    "totalDocsExamined": 24,
+    "nReturned": 20,
+    "serverExecutionTimeMillis": 4,
+    "latencies": {
+      "mean": 1,
+      "p50": 0.71,
+      "p95": 3.01,
+      "p99": 5.86
+    }
+  }
+}

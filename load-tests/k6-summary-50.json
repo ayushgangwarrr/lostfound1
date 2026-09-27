@@ -1,0 +1,263 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "Authenticated Profile & User Reports": {
+                "name": "Authenticated Profile & User Reports",
+                "path": "::Authenticated Profile & User Reports",
+                "id": "fa0721a2e115c1ac514ae6950700f2b1",
+                "groups": {},
+                "checks": {
+                        "profile status is 200": {
+                            "name": "profile status is 200",
+                            "path": "::Authenticated Profile & User Reports::profile status is 200",
+                            "id": "56ee7f2b1680e22a9e8c89c5afba61a7",
+                            "passes": 81,
+                            "fails": 0
+                        },
+                        "user reports status is 200": {
+                            "name": "user reports status is 200",
+                            "path": "::Authenticated Profile & User Reports::user reports status is 200",
+                            "id": "307fd1e97bcb8a95386b1c332daf4667",
+                            "passes": 81,
+                            "fails": 0
+                        }
+                    }
+            },
+            "Item Creation": {
+                "name": "Item Creation",
+                "path": "::Item Creation",
+                "id": "88b48c3268d7a950f6ad66f393d00d98",
+                "groups": {},
+                "checks": {
+                        "report creation status is 201": {
+                            "name": "report creation status is 201",
+                            "path": "::Item Creation::report creation status is 201",
+                            "id": "21aca2e05dcabf395a81bb9b99adcef7",
+                            "passes": 44,
+                            "fails": 0
+                        }
+                    }
+            },
+            "User Search": {
+                "name": "User Search",
+                "path": "::User Search",
+                "id": "3dcbaa7d8e0e2b01138a9c1b6c2ab058",
+                "groups": {},
+                "checks": {
+                        "user search status is 200": {
+                            "fails": 0,
+                            "name": "user search status is 200",
+                            "path": "::User Search::user search status is 200",
+                            "id": "f5a77194ab28a11a9c7f3bc89ca56b6d",
+                            "passes": 60
+                        }
+                    }
+            },
+            "Item Browsing & Search": {
+                "name": "Item Browsing & Search",
+                "path": "::Item Browsing & Search",
+                "id": "18654a493199f78bcfca4dc4c72be0fd",
+                "groups": {},
+                "checks": {
+                        "reports list status is 200": {
+                            "path": "::Item Browsing & Search::reports list status is 200",
+                            "id": "bdf0987f3f7bb871975599aa1bbd677b",
+                            "passes": 326,
+                            "fails": 0,
+                            "name": "reports list status is 200"
+                        },
+                        "reports list has body": {
+                            "fails": 0,
+                            "name": "reports list has body",
+                            "path": "::Item Browsing & Search::reports list has body",
+                            "id": "b5d575113b600bf26741b670f443e0c2",
+                            "passes": 326
+                        },
+                        "single report status is 200 or 404": {
+                            "id": "0560acda1691cb329bcd9322a2e4b79b",
+                            "passes": 326,
+                            "fails": 0,
+                            "name": "single report status is 200 or 404",
+                            "path": "::Item Browsing & Search::single report status is 200 or 404"
+                        },
+                        "filtered reports status is 200": {
+                            "passes": 326,
+                            "fails": 0,
+                            "name": "filtered reports status is 200",
+                            "path": "::Item Browsing & Search::filtered reports status is 200",
+                            "id": "0627e5a390f10fedca1dc22782c33ece"
+                        }
+                    }
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "http_req_duration": {
+            "avg": 574.2067966237929,
+            "min": 122.269,
+            "med": 579.2139999999999,
+            "max": 1337.625,
+            "p(90)": 826.7498,
+            "p(95)": 899.73605,
+            "thresholds": {
+                "p(95)<1500": false,
+                "p(99)<3000": false
+            }
+        },
+        "user_search_latency_ms": {
+            "min": 241,
+            "med": 427.5,
+            "max": 756,
+            "p(90)": 541.3000000000001,
+            "p(95)": 603.3999999999999,
+            "avg": 431.05
+        },
+        "vus_max": {
+            "value": 50,
+            "min": 50,
+            "max": 50
+        },
+        "browse_latency_ms": {
+            "p(95)": 972.7499999999999,
+            "avg": 738.3006134969326,
+            "min": 241,
+            "med": 738,
+            "max": 1258,
+            "p(90)": 905
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 1.103,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.03731993569131833
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "auth_latency_ms": {
+            "avg": 295.2345679012346,
+            "min": 122,
+            "med": 280,
+            "max": 706,
+            "p(90)": 407,
+            "p(95)": 436
+        },
+        "data_sent": {
+            "count": 200632,
+            "rate": 12383.158751031122
+        },
+        "http_req_receiving": {
+            "avg": 4.956926848874611,
+            "min": 0.01,
+            "med": 0.142,
+            "max": 235.432,
+            "p(90)": 0.29940000000000005,
+            "p(95)": 0.892749999999998
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 1244,
+            "thresholds": {
+                "rate<0.02": false
+            },
+            "value": 0
+        },
+        "http_reqs": {
+            "count": 1244,
+            "rate": 76.78062067009608
+        },
+        "iteration_duration": {
+            "max": 2682.5775,
+            "p(90)": 2190.349042,
+            "p(95)": 2280.5628745,
+            "avg": 1530.0556749804298,
+            "min": 290.197333,
+            "med": 1811.528792
+        },
+        "http_req_sending": {
+            "max": 0.354,
+            "p(90)": 0.013,
+            "p(95)": 0.017,
+            "avg": 0.009738745980707356,
+            "min": 0.002,
+            "med": 0.007
+        },
+        "vus": {
+            "min": 11,
+            "max": 50,
+            "value": 11
+        },
+        "http_req_blocked": {
+            "p(90)": 0.004,
+            "p(95)": 0.007,
+            "avg": 0.18567041800643297,
+            "min": 0,
+            "med": 0.002,
+            "max": 7.143
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 574.2067966237929,
+            "min": 122.269,
+            "med": 579.2139999999999,
+            "max": 1337.625,
+            "p(90)": 826.7498,
+            "p(95)": 899.73605
+        },
+        "http_req_waiting": {
+            "p(90)": 813.5122000000001,
+            "p(95)": 867.9572,
+            "avg": 569.2401310289382,
+            "min": 122.248,
+            "med": 576.433,
+            "max": 1337.47
+        },
+        "data_received": {
+            "count": 228438911,
+            "rate": 14099422.324582668
+        },
+        "error_rate": {
+            "fails": 511,
+            "passes": 0,
+            "thresholds": {
+                "rate<0.02": false
+            },
+            "value": 0
+        },
+        "group_duration": {
+            "avg": 1398.5879049197645,
+            "min": 176.7305,
+            "med": 1696.077208,
+            "max": 2511.528208,
+            "p(90)": 2064.196417,
+            "p(95)": 2133.4167085
+        },
+        "iterations": {
+            "count": 511,
+            "rate": 31.539306400658436
+        },
+        "checks": {
+            "passes": 1570,
+            "fails": 0,
+            "value": 1
+        },
+        "create_report_latency_ms": {
+            "avg": 417.22727272727275,
+            "min": 177,
+            "med": 401,
+            "max": 625,
+            "p(90)": 560.4,
+            "p(95)": 567
+        }
+    }
+}

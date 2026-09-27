@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-09-09T10:17:12.397Z",
+  "totalAttempts": 15,
+  "successful": 15,
+  "failed": 0,
+  "successRate": 100,
+  "cloudinaryUploads": 0,
+  "fallbackUploads": 15,
+  "overallLatency": {
+    "mean": 2428.56,
+    "p50": 1381.15,
+    "p95": 5954.17,
+    "p99": 5954.17
+  },
+  "byFileSize": {
+    "Small (50 KB)": {
+      "mean": 855.7,
+      "p50": 672.49,
+      "p95": 1834.56,
+      "p99": 1834.56
+    },
+    "Medium (250 KB)": {
+      "mean": 1289.43,
+      "p50": 1375.37,
+      "p95": 1445.53,
+      "p99": 1445.53
+    },
+    "Large (1 MB)": {
+      "mean": 5140.54,
+      "p50": 5212.45,
+      "p95": 5954.17,
+      "p99": 5954.17
+    }
+  }
+}

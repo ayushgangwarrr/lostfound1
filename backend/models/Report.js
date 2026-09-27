@@ -68,5 +68,15 @@ const reportSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for query performance & scalability
+// 1. Global Feed Sorting: avoids in-memory SORT stage and full collection scan
+reportSchema.index({ createdAt: -1 });
+
+// 2. User's Reports: ESR rule (Equality on userId, Sort on createdAt)
+reportSchema.index({ userId: 1, createdAt: -1 });
+
+// 3. Category & Type Filtered Queries: ESR rule (Equality on type & category, Sort on createdAt)
+reportSchema.index({ type: 1, category: 1, createdAt: -1 });
+
 const Report = mongoose.model("Report", reportSchema);
 export default Report;

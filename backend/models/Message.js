@@ -61,6 +61,8 @@ const messageSchema = new mongoose.Schema(
 
 messageSchema.index({ conversationId: 1, createdAt: 1 });
 messageSchema.index({ receiverId: 1, readStatus: 1 });
+// Compound index for instant read receipts and badge unread counts
+messageSchema.index({ conversationId: 1, receiverId: 1, readStatus: 1 });
 
 const Message = mongoose.model("Message", messageSchema);
 export default Message;

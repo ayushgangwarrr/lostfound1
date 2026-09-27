@@ -6,6 +6,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createServer } from "http";
 import { Server as SocketServer } from "socket.io";
+import * as metrics from "./metrics/metrics.js";
+import metricsMiddleware from "./middleware/metricsMiddleware.js";
 import jwt from "jsonwebtoken";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -63,6 +65,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Metrics middleware
+app.use(metricsMiddleware);
+
+// Expose Prometheus metrics
+app.get("/metrics", async (req, res) => {
+  try {
+    res.set("Content-Type", metrics.metricsRegistry.contentType);
+    res.end(await metrics.metricsRegistry.metrics());
+  } catch (err) {
+    res.status(500).send("Failed to collect metrics");
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api", reportRoutes);
 app.use("/api/issues", issueRoutes);
@@ -91,10 +106,13 @@ const parseCookies = (cookieHeader = "") =>
   }, {});
 
 io.use((socket, next) => {
+  try { metrics.socketConnectionAttempts.inc(); } catch (e) {}
+  
   const cookies = parseCookies(socket.handshake.headers.cookie || "");
-  const token = cookies.token;
+  const token = cookies.token || socket.handshake.auth?.token;
   if (!token) {
-    return next(new Error("Authentication error"));
+    try { metrics.socketConnectionFailures.inc({ reason: "token_missing" }); } catch (e) {}
+    return next(new Error("Authentication error: token missing"));
   }
 
   try {
@@ -102,13 +120,22 @@ io.use((socket, next) => {
     socket.userId = decoded.id;
     return next();
   } catch (_error) {
-    return next(new Error("Authentication error"));
+    try { metrics.socketConnectionFailures.inc({ reason: "invalid_token" }); } catch (e) {}
+    return next(new Error("Authentication error: invalid token"));
   }
 });
 
 io.on("connection", (socket) => {
   const userId = socket.userId;
-  if (!userId) return;
+  if (!userId) {
+    try { metrics.socketConnectionFailures.inc({ reason: "missing_user_id" }); } catch (e) {}
+    return socket.disconnect(true);
+  }
+
+  try {
+    metrics.socketConnectionSuccess.inc();
+    metrics.activeSocketConnections.inc();
+  } catch (e) {}
 
   const sockets = connectedUsers.get(userId) || new Set();
   sockets.add(socket.id);
@@ -129,6 +156,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", ({ conversationId }) => {
+    try { metrics.socketTypingEvents.inc({ type: "start" }); } catch (e) {}
     if (conversationId) {
       socket.to(`conversation_${conversationId}`).emit("typing", {
         conversationId,
@@ -138,6 +166,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("stopTyping", ({ conversationId }) => {
+    try { metrics.socketTypingEvents.inc({ type: "stop" }); } catch (e) {}
     if (conversationId) {
       socket.to(`conversation_${conversationId}`).emit("stopTyping", {
         conversationId,
@@ -146,16 +175,30 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("sendMessage", async ({ conversationId, text, messageType = "text", attachments = [] }) => {
+  socket.on("sendMessage", async ({ conversationId, text, messageType = "text", attachments = [], clientTimestamp }, ack) => {
     try {
-      if (!conversationId || !text) return;
+      try { metrics.socketMessagesReceived.inc(); } catch (e) {}
+      const start = process.hrtime();
+      if (!conversationId || !text) {
+        if (typeof ack === "function") ack({ error: "Missing conversationId or text" });
+        return;
+      }
 
       const conversation = await Conversation.findById(conversationId);
-      if (!conversation) return;
-      if (!conversation.participants.some((participant) => participant.toString() === userId.toString())) return;
+      if (!conversation) {
+        if (typeof ack === "function") ack({ error: "Conversation not found" });
+        return;
+      }
+      if (!conversation.participants.some((participant) => participant.toString() === userId.toString())) {
+        if (typeof ack === "function") ack({ error: "Unauthorized for this conversation" });
+        return;
+      }
 
       const receiverId = conversation.participants.find((participant) => participant.toString() !== userId.toString());
-      if (!receiverId) return;
+      if (!receiverId) {
+        if (typeof ack === "function") ack({ error: "Receiver not found" });
+        return;
+      }
 
       const message = await Message.create({
         conversationId,
@@ -172,20 +215,51 @@ io.on("connection", (socket) => {
       conversation.lastMessageAt = new Date();
       await conversation.save();
 
+      const populatedMessage = await message.populate("senderId", "name rollNumber");
       const payload = {
-        message: await message.populate("senderId", "name rollNumber"),
+        message: populatedMessage,
         conversationId,
+        clientTimestamp: clientTimestamp || Date.now(),
+        serverTimestamp: Date.now(),
       };
 
       io.to(`conversation_${conversationId}`).emit("receiveMessage", payload);
       io.to(`user_${receiverId}`).emit("newMessage", payload);
+
+      const diff = process.hrtime(start);
+      const processingSeconds = diff[0] + diff[1] / 1e9;
+      try {
+        metrics.messageDeliveryLatency.observe(processingSeconds);
+        metrics.socketMessagesDelivered.inc();
+      } catch (e) {}
+
+      if (typeof ack === "function") {
+        ack({
+          status: "ok",
+          messageId: message._id,
+          serverProcessingMs: (processingSeconds * 1000).toFixed(2),
+        });
+      }
     } catch (error) {
       console.error("Socket sendMessage error", error);
+      if (typeof ack === "function") ack({ error: "Server error processing message" });
     }
+  });
+
+  socket.on("messageDeliveredReceipt", ({ clientSendTimestamp }) => {
+    try {
+      if (clientSendTimestamp) {
+        const e2eSeconds = (Date.now() - clientSendTimestamp) / 1000;
+        if (e2eSeconds >= 0 && e2eSeconds < 60) {
+          metrics.messageEndToEndLatency.observe(e2eSeconds);
+        }
+      }
+    } catch (e) {}
   });
 
   socket.on("messageSeen", async ({ conversationId }) => {
     try {
+      try { metrics.socketReadReceiptEvents.inc(); } catch (e) {}
       if (!conversationId) return;
       await Message.updateMany(
         { conversationId, receiverId: userId, readStatus: false },
@@ -199,13 +273,18 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     const currentSockets = connectedUsers.get(userId);
-    if (!currentSockets) return;
-    currentSockets.delete(socket.id);
-    if (currentSockets.size === 0) {
-      connectedUsers.delete(userId);
-    } else {
-      connectedUsers.set(userId, currentSockets);
+    if (currentSockets) {
+      currentSockets.delete(socket.id);
+      if (currentSockets.size === 0) {
+        connectedUsers.delete(userId);
+      } else {
+        connectedUsers.set(userId, currentSockets);
+      }
     }
+    try {
+      metrics.socketDisconnects.inc();
+      metrics.activeSocketConnections.dec();
+    } catch (e) {}
   });
 });
 

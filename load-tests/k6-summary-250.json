@@ -1,0 +1,263 @@
+{
+    "metrics": {
+        "http_req_duration": {
+            "max": 18995.79,
+            "p(90)": 6609.745400000008,
+            "p(95)": 16329.651399999997,
+            "avg": 2385.583451674036,
+            "min": 0,
+            "med": 917.271,
+            "thresholds": {
+                "p(95)<1500": true,
+                "p(99)<3000": true
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "min": 27.346,
+            "med": 950.7964999999999,
+            "max": 18995.79,
+            "p(90)": 7963.161,
+            "p(95)": 16517.892200000002,
+            "avg": 2504.2298435013254
+        },
+        "http_req_connecting": {
+            "avg": 160.10983575489578,
+            "min": 0,
+            "med": 0,
+            "max": 5863.292,
+            "p(90)": 3.8186,
+            "p(95)": 578.7430999999997
+        },
+        "http_req_sending": {
+            "min": 0,
+            "med": 0.009,
+            "max": 0.381,
+            "p(90)": 0.032,
+            "p(95)": 0.056,
+            "avg": 0.016649399873657624
+        },
+        "vus_max": {
+            "value": 250,
+            "min": 250,
+            "max": 250
+        },
+        "checks": {
+            "passes": 1867,
+            "fails": 109,
+            "value": 0.944838056680162
+        },
+        "browse_latency_ms": {
+            "max": 20901,
+            "p(90)": 18761.4,
+            "p(95)": 20000.6,
+            "avg": 5217.394402035623,
+            "min": 249,
+            "med": 1659
+        },
+        "http_req_waiting": {
+            "min": 0,
+            "med": 910.851,
+            "max": 18945.326,
+            "p(90)": 6537.535400000005,
+            "p(95)": 16293.218799999999,
+            "avg": 2363.197423247
+        },
+        "iteration_duration": {
+            "min": 193.5785,
+            "med": 3637.766,
+            "max": 22406.096708,
+            "p(90)": 20362.252042199998,
+            "p(95)": 21604.2748082,
+            "avg": 7065.951450302253
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "http_req_receiving": {
+            "max": 721.625,
+            "p(90)": 62.98860000000001,
+            "p(95)": 130.3784,
+            "avg": 22.36937902716362,
+            "min": 0,
+            "med": 0.116
+        },
+        "group_duration": {
+            "avg": 6940.4404985624,
+            "min": 136.5235,
+            "med": 3508.105375,
+            "max": 22263.592084,
+            "p(90)": 20240.1345004,
+            "p(95)": 21473.7698168
+        },
+        "data_received": {
+            "count": 310957155,
+            "rate": 13864259.074616443
+        },
+        "data_sent": {
+            "count": 256386,
+            "rate": 11431.163007342962
+        },
+        "user_search_latency_ms": {
+            "med": 994.5,
+            "max": 20628,
+            "p(90)": 19012.8,
+            "p(95)": 20026.8,
+            "avg": 5172.694444444444,
+            "min": 150
+        },
+        "vus": {
+            "value": 28,
+            "min": 28,
+            "max": 250
+        },
+        "create_report_latency_ms": {
+            "avg": 3697.8088235294117,
+            "min": 136,
+            "med": 877.5,
+            "max": 20225,
+            "p(90)": 16141.800000000001,
+            "p(95)": 18275.149999999998
+        },
+        "http_req_blocked": {
+            "avg": 160.776519898926,
+            "min": 0,
+            "med": 0.002,
+            "max": 5867.301,
+            "p(90)": 9.7012,
+            "p(95)": 582.0165999999995
+        },
+        "auth_latency_ms": {
+            "med": 701,
+            "max": 20370,
+            "p(90)": 18408.2,
+            "p(95)": 19529.45,
+            "avg": 4841.484848484848,
+            "min": 41
+        },
+        "iterations": {
+            "count": 665,
+            "rate": 29.649526104713477
+        },
+        "error_rate": {
+            "passes": 58,
+            "fails": 607,
+            "thresholds": {
+                "rate<0.02": true
+            },
+            "value": 0.08721804511278196
+        },
+        "http_req_failed": {
+            "passes": 75,
+            "fails": 1508,
+            "thresholds": {
+                "rate<0.02": true
+            },
+            "value": 0.047378395451674035
+        },
+        "http_reqs": {
+            "count": 1583,
+            "rate": 70.57924785528036
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "Authenticated Profile & User Reports": {
+                "name": "Authenticated Profile & User Reports",
+                "path": "::Authenticated Profile & User Reports",
+                "id": "fa0721a2e115c1ac514ae6950700f2b1",
+                "groups": {},
+                "checks": {
+                        "profile status is 200": {
+                            "path": "::Authenticated Profile & User Reports::profile status is 200",
+                            "id": "56ee7f2b1680e22a9e8c89c5afba61a7",
+                            "passes": 119,
+                            "fails": 13,
+                            "name": "profile status is 200"
+                        },
+                        "user reports status is 200": {
+                            "fails": 3,
+                            "name": "user reports status is 200",
+                            "path": "::Authenticated Profile & User Reports::user reports status is 200",
+                            "id": "307fd1e97bcb8a95386b1c332daf4667",
+                            "passes": 129
+                        }
+                    }
+            },
+            "Item Creation": {
+                "name": "Item Creation",
+                "path": "::Item Creation",
+                "id": "88b48c3268d7a950f6ad66f393d00d98",
+                "groups": {},
+                "checks": {
+                        "report creation status is 201": {
+                            "fails": 4,
+                            "name": "report creation status is 201",
+                            "path": "::Item Creation::report creation status is 201",
+                            "id": "21aca2e05dcabf395a81bb9b99adcef7",
+                            "passes": 64
+                        }
+                    }
+            },
+            "Item Browsing & Search": {
+                "id": "18654a493199f78bcfca4dc4c72be0fd",
+                "groups": {},
+                "checks": {
+                        "reports list status is 200": {
+                            "path": "::Item Browsing & Search::reports list status is 200",
+                            "id": "bdf0987f3f7bb871975599aa1bbd677b",
+                            "passes": 359,
+                            "fails": 34,
+                            "name": "reports list status is 200"
+                        },
+                        "reports list has body": {
+                            "name": "reports list has body",
+                            "path": "::Item Browsing & Search::reports list has body",
+                            "id": "b5d575113b600bf26741b670f443e0c2",
+                            "passes": 359,
+                            "fails": 34
+                        },
+                        "single report status is 200 or 404": {
+                            "id": "0560acda1691cb329bcd9322a2e4b79b",
+                            "passes": 379,
+                            "fails": 14,
+                            "name": "single report status is 200 or 404",
+                            "path": "::Item Browsing & Search::single report status is 200 or 404"
+                        },
+                        "filtered reports status is 200": {
+                            "name": "filtered reports status is 200",
+                            "path": "::Item Browsing & Search::filtered reports status is 200",
+                            "id": "0627e5a390f10fedca1dc22782c33ece",
+                            "passes": 393,
+                            "fails": 0
+                        }
+                    },
+                "name": "Item Browsing & Search",
+                "path": "::Item Browsing & Search"
+            },
+            "User Search": {
+                "name": "User Search",
+                "path": "::User Search",
+                "id": "3dcbaa7d8e0e2b01138a9c1b6c2ab058",
+                "groups": {},
+                "checks": {
+                        "user search status is 200": {
+                            "fails": 7,
+                            "name": "user search status is 200",
+                            "path": "::User Search::user search status is 200",
+                            "id": "f5a77194ab28a11a9c7f3bc89ca56b6d",
+                            "passes": 65
+                        }
+                    }
+            }
+        },
+        "checks": {}
+    }
+}

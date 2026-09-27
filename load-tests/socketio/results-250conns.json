@@ -1,0 +1,24 @@
+{
+  "targetConnections": 250,
+  "durationSeconds": 12,
+  "connectionSuccessRate": "100.00",
+  "activeConnections": 250,
+  "unexpectedDisconnects": 0,
+  "messagesSent": 79,
+  "messagesAcked": 79,
+  "messagesDelivered": 394,
+  "throughputMessagesPerSec": 26.22,
+  "serverProcessingLatency": {
+    "mean": 10.4,
+    "p50": 9.88,
+    "p95": 15.52,
+    "p99": 31.08
+  },
+  "endToEndDeliveryLatency": {
+    "mean": 11.92,
+    "p50": 11,
+    "p95": 19,
+    "p99": 32
+  },
+  "timestamp": "2026-09-09T10:18:02.845Z"
+}
